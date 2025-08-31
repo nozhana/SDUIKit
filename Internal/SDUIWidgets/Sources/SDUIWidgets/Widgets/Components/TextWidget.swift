@@ -112,3 +112,15 @@ extension TextWidget {
         }
     }
 }
+
+extension TextWidget: ExpressibleByStringLiteral {
+    nonisolated public init(stringLiteral value: String) {
+        self.init(data: .init(content: value))
+    }
+}
+
+extension TextWidget: ExpressibleByStringInterpolation {
+    nonisolated public init(stringInterpolation: DefaultStringInterpolation) {
+        self.init(stringLiteral: stringInterpolation.description)
+    }
+}

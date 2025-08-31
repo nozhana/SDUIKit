@@ -16,24 +16,24 @@ public struct ScaffoldWidget: WidgetView {
     }
     
     @State private var path = [String]()
+    @State private var alertItem: Identified<(String, String, [ShowAlertAction.ActionItem]), UUID>?
+    @State private var showAlert = false
     
     public var body: some View {
         NavigationStack(path: $path) {
             AnyWidgetView(data.content)
-                .ifLet(data.destinations) { content, destinations in
-                    content
-                        .navigationDestination(for: String.self) { key in
-                            if let widget = destinations[key] {
-                                widget
-                            } else {
-                                ContentUnavailableView(
-                                    "Invalid Path",
-                                    systemImage: "point.bottomleft.filled.forward.to.point.topright.scurvepath",
-                                    description: Text("No destination found.\nPath: " + (path.isEmpty ? key : path.joined(separator: "/")))
-                                )
-                                .navigationTitle("Invalid Path")
-                            }
-                        }
+                .navigationDestination(for: String.self) { key in
+                    let destinations = data.destinations ?? [:]
+                    if let widget = destinations[key] {
+                        widget
+                    } else {
+                        ContentUnavailableView(
+                            "Invalid Path",
+                            systemImage: "point.bottomleft.filled.forward.to.point.topright.scurvepath",
+                            description: Text("No destination found.\nPath: " + (path.isEmpty ? key : path.joined(separator: "/")))
+                        )
+                        .navigationTitle("Invalid Path")
+                    }
                 }
                 .if(data.title == nil && data.toolbar == nil) { content in
                     content
@@ -59,10 +59,24 @@ public struct ScaffoldWidget: WidgetView {
                 .ifLet(data.title) { content, title in
                     content.navigationTitle(title)
                 }
+                .alert(alertItem?.value.0 ?? "Alert", isPresented: $showAlert, presenting: alertItem) { item in
+                    let identifiedData = item.value.2.map(Identified<ShowAlertAction.ActionItem, UUID>.init)
+                    ForEach(identifiedData) { identifiedItem in
+                        let (action, label) = identifiedItem.value
+                        ButtonWidget(data: .init(action: action, label: label))
+                    }
+                } message: { item in
+                    Text(item.value.1)
+                }
+
         }
         .environment(\.setPath, .init(action: { path = .init($0) }))
         .environment(\.pushPath, .init(action: { path.append($0) }))
         .environment(\.popPath, .init(action: { _ = path.popLast()}))
+        .environment(\.showAlert, .init {
+            alertItem = .init(($0, $1, $2))
+            showAlert = true
+        })
     }
 }
 
@@ -115,6 +129,17 @@ struct PushNavigationPathAction: Sendable {
     }
 }
 
+struct ShowAlertAction: Sendable {
+    typealias ActionItem = (action: ButtonWidget.Action, label: AnyWidget)
+    
+    var action: (@MainActor (_ title: String, _ message: String, _ actions: [ActionItem]) -> Void)?
+    
+    @MainActor
+    func callAsFunction(_ title: String, message: String, actions: [ActionItem]) {
+        action?(title, message, actions)
+    }
+}
+
 struct SimpleEnvironmentAction: Sendable {
     var action: (@MainActor () -> Void)?
     
@@ -128,6 +153,7 @@ extension EnvironmentValues {
     @Entry var setPath = SetNavigationPathAction()
     @Entry var pushPath = PushNavigationPathAction()
     @Entry var popPath = SimpleEnvironmentAction()
+    @Entry var showAlert = ShowAlertAction()
 }
 
 #Preview {
