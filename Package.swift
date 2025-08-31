@@ -14,13 +14,14 @@ let package = Package(
                     targets: ["SDUIKitClient"]),
     ],
     dependencies: [
+        .package(path: "Internal/SDUICore"),
         .package(path: "Internal/SDUIWidgets"),
         .package(path: "Internal/SDUIMacros"),
     ],
     targets: [
         .target(
-            name: "SDUIKit", dependencies: ["SDUIWidgets", "SDUIMacros"]),
+            name: "SDUIKit", dependencies: ["SDUICore", "SDUIWidgets", "SDUIMacros"]),
         .executableTarget(name: "SDUIKitClient",
-                          dependencies: ["SDUIWidgets", "SDUIMacros"]),
+                          dependencies: ["SDUICore", "SDUIWidgets", "SDUIMacros"]),
     ]
 )

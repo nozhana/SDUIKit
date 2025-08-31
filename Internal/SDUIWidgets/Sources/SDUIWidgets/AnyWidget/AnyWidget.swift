@@ -5,7 +5,7 @@
 //  Created by Nozhan A. on 8/30/25.
 //
 
-import SDUIMacros
+import SDUICore
 
 public struct AnyWidget: WidgetProtocol {
     public typealias Data = Never

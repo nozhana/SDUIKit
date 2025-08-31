@@ -96,8 +96,8 @@ extension WidgetBuilderMacro: ExtensionMacro {
             }
             .forEach { (key, type) in
                 let variableDecl = try VariableDeclSyntax("\(acl) var \(raw: key): \(raw: type)")
-                let parameterDecl = try FunctionParameterSyntax("\(raw: key): \(raw: type),")
-                let initializerBlock = try CodeBlockItemSyntax("self.\(raw: key) = \(raw: key)")
+                let parameterDecl = FunctionParameterSyntax("\(raw: key): \(raw: type),")
+                let initializerBlock = CodeBlockItemSyntax("self.\(raw: key) = \(raw: key)")
                 variables.append(variableDecl)
                 initParams.append(parameterDecl)
                 initializerBlocks.append(initializerBlock)

@@ -5,6 +5,8 @@
 //  Created by Nozhan A. on 8/31/25.
 //
 
+@_exported import SDUICore
+
 @attached(extension, conformances: WidgetProtocol, names: arbitrary)
 @attached(member, names: named(data), named(init(data:)), named(init()))
 public macro WidgetBuilder<Data>(of dataType: Data.Type) = #externalMacro(module: "SDUIMacrosInternal", type: "WidgetBuilderMacro") where Data: Decodable & Sendable

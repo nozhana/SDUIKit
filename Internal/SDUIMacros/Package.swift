@@ -19,17 +19,19 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/swiftlang/swift-syntax.git", from: "600.0.0-latest"),
+        .package(path: "../SDUICore"),
     ],
     targets: [
         .macro(
             name: "SDUIMacrosInternal",
             dependencies: [
                 .product(name: "SwiftSyntaxMacros", package: "swift-syntax"),
-                .product(name: "SwiftCompilerPlugin", package: "swift-syntax")
+                .product(name: "SwiftCompilerPlugin", package: "swift-syntax"),
+                "SDUICore",
             ]
         ),
 
-        .target(name: "SDUIMacros", dependencies: ["SDUIMacrosInternal"]),
+        .target(name: "SDUIMacros", dependencies: ["SDUIMacrosInternal", "SDUICore"]),
 
         .executableTarget(name: "SDUIMacrosClient", dependencies: ["SDUIMacros"]),
 
