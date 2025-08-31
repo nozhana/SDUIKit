@@ -54,8 +54,13 @@ public struct WidgetBuilderMacro: MemberMacro {
         
         let dataVarDecl: DeclSyntax = "\(acl) var data: \(raw: dataType)"
         
+        var dataParamSyntax: FunctionParameterSyntax = "data: \(raw: dataType)"
+        if dataType == "EmptyWidgetData" {
+            dataParamSyntax.defaultValue = .init(value: ExprSyntax(".empty"))
+        }
+        
         let initDecl: DeclSyntax = """
-nonisolated \(acl) init(data: \(raw: dataType)) {
+nonisolated \(acl) init(\(dataParamSyntax)) {
     self.data = data
 }
 """

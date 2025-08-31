@@ -6,9 +6,9 @@
 //
 
 @attached(extension, conformances: WidgetProtocol, names: arbitrary)
-@attached(member, names: named(data), named(init(data:)))
+@attached(member, names: named(data), named(init(data:)), named(init()))
 public macro WidgetBuilder<Data>(of dataType: Data.Type) = #externalMacro(module: "SDUIMacrosInternal", type: "WidgetBuilderMacro") where Data: Decodable & Sendable
 
 @attached(extension, conformances: WidgetProtocol, names: arbitrary)
-@attached(member, names: named(data), named(init(data:)))
+@attached(member, names: named(data), named(init(data:)), named(init()))
 public macro WidgetBuilder(args: WidgetArgument...) = #externalMacro(module: "SDUIMacrosInternal", type: "WidgetBuilderMacro")
