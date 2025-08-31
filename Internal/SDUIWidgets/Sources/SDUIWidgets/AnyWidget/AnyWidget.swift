@@ -5,6 +5,8 @@
 //  Created by Nozhan A. on 8/30/25.
 //
 
+import SDUIMacros
+
 public struct AnyWidget: WidgetProtocol {
     public typealias Data = Never
     public var data: Never { fatalError("AnyWidget.data should not be accessed directly.") }

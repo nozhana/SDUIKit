@@ -5,6 +5,7 @@
 //  Created by Nozhan A. on 8/30/25.
 //
 
+import SDUIMacros
 import SwiftUI
 
 public struct WidgetContainer: View {

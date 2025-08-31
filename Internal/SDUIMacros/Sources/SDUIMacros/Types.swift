@@ -1,0 +1,19 @@
+//
+//  Types.swift
+//  SDUIMacros
+//
+//  Created by Nozhan A. on 8/31/25.
+//
+
+public enum Argument: Sendable {
+    case string(_ name: String, optional: Bool = false)
+    case stringArray(_ name: String, optional: Bool = false)
+    case integer(_ name: String, optional: Bool = false)
+    case double(_ name: String, optional: Bool = false)
+    case widget(_ name: String, optional: Bool = false)
+    case widgets(_ name: String, optional: Bool = false)
+    case custom(_ name: String, type: String, optional: Bool = false)
+    
+    public static let content = widget("content")
+    public static let items = widgets("items")
+}

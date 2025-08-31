@@ -13,10 +13,11 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../SDUIUtilities"),
+        .package(path: "../SDUIMacros"),
     ],
     targets: [
         .target(
-            name: "SDUIWidgets", dependencies: ["SDUIUtilities"],
+            name: "SDUIWidgets", dependencies: ["SDUIUtilities", "SDUIMacros"],
             swiftSettings: [.enableExperimentalFeature("BareSlashRegexLiterals")]),
     ]
 )
