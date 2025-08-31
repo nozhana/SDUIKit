@@ -41,7 +41,7 @@ extension FrameWidget {
 #Preview {
     let json = """
 {
-    "color": "eeee00",
+    "background": "#eeee00",
     "content": {
         "height": 100,
         "content": {

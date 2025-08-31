@@ -5,38 +5,23 @@
 //  Created by Nozhan A. on 8/30/25.
 //
 
-import SDUIUtilities
+import SDUIMacros
 import SwiftUI
 
-public struct BackgroundWidget: WidgetView {
-    public var data: Data
-    
-    nonisolated public init(data: Data) {
-        self.data = data
-    }
-    
+@WidgetBuilder(args: .widget("background"), .custom("alignment", type: "Alignment", optional: true), .content)
+public struct BackgroundWidget: View {
     public var body: some View {
         AnyWidgetView(data.content)
-            .background(Color(hex: data.color))
-    }
-}
-
-extension BackgroundWidget {
-    public struct Data: Decodable, Sendable {
-        public var color: String
-        public var content: AnyWidget
-        
-        public init(color: String, content: AnyWidget) {
-            self.color = color
-            self.content = content
-        }
+            .background(alignment: data.alignment?.systemAlignment ?? .center) {
+                AnyWidgetView(data.background)
+            }
     }
 }
 
 #Preview {
     let json = """
 {
-    "color": "00aa44",
+    "background": "icon-globe",
     "content": {
         "padding": 16,
         "content": "Hello, World!"
