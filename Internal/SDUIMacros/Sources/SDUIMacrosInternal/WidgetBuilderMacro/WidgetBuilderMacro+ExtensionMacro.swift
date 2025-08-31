@@ -36,9 +36,6 @@ extension WidgetBuilderMacro: ExtensionMacro {
         }
         
         let functionCalls = arguments.compactMap({ $0.expression.as(FunctionCallExprSyntax.self) })
-        if functionCalls.isEmpty {
-            return [extensionExpr]
-        }
         
         var (variables, initParams, initializerBlocks): ([VariableDeclSyntax], [FunctionParameterSyntax], [CodeBlockItemSyntax]) = try functionCalls.reduce(into: ([], [], [])) { partialResult, functionCall in
             guard var typeName = functionCall.calledExpression.as(MemberAccessExprSyntax.self)?.declName.baseName.text,
@@ -84,13 +81,35 @@ extension WidgetBuilderMacro: ExtensionMacro {
             partialResult.1.append(parameterDecl)
             partialResult.2.append(initializerBlock)
         }
+        
+        let memberAccessExprs = arguments.compactMap( { $0.expression.as(MemberAccessExprSyntax.self) })
+        
+        try memberAccessExprs
+            .map(\.declName.baseName.text)
+            .filter(["content", "items"].contains)
+            .map { key -> (key: String, type: String) in
+                if key == "items" {
+                    (key, "[AnyWidget]")
+                } else {
+                    (key, "AnyWidget")
+                }
+            }
+            .forEach { (key, type) in
+                let variableDecl = try VariableDeclSyntax("\(acl) var \(raw: key): \(raw: type)")
+                let parameterDecl = try FunctionParameterSyntax("\(raw: key): \(raw: type),")
+                let initializerBlock = try CodeBlockItemSyntax("self.\(raw: key) = \(raw: key)")
+                variables.append(variableDecl)
+                initParams.append(parameterDecl)
+                initializerBlocks.append(initializerBlock)
+            }
+        
         if var last = initParams.popLast() {
             last.trailingComma = nil
             initParams.append(last)
         }
         
         guard !variables.isEmpty else {
-            throw MacroExpansionErrorMessage("Unresolved state: No variables mapped from function calls")
+            return [extensionExpr]
         }
         
         var dataDecl = try StructDeclSyntax("\(acl) struct Data: Decodable, Sendable {}")

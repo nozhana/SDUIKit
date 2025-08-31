@@ -5,7 +5,7 @@
 //  Created by Nozhan A. on 8/31/25.
 //
 
-public enum Argument: Sendable {
+public enum WidgetArgument: Sendable {
     case string(_ name: String, optional: Bool = false)
     case stringArray(_ name: String, optional: Bool = false)
     case integer(_ name: String, optional: Bool = false)
@@ -16,4 +16,9 @@ public enum Argument: Sendable {
     
     public static let content = widget("content")
     public static let items = widgets("items")
+}
+
+public struct EmptyWidgetData: Decodable, Sendable {
+    public init() {}
+    public static let empty = EmptyWidgetData()
 }

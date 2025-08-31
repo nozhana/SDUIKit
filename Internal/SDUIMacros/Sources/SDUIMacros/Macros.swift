@@ -7,8 +7,8 @@
 
 @attached(extension, conformances: WidgetProtocol, names: arbitrary)
 @attached(member, names: named(data), named(init(data:)))
-public macro WidgetBuilder<Data>(of dataType: Data.Type, args: Argument...) = #externalMacro(module: "SDUIMacrosInternal", type: "WidgetBuilderMacro")
+public macro WidgetBuilder<Data>(of dataType: Data.Type) = #externalMacro(module: "SDUIMacrosInternal", type: "WidgetBuilderMacro") where Data: Decodable & Sendable
 
 @attached(extension, conformances: WidgetProtocol, names: arbitrary)
 @attached(member, names: named(data), named(init(data:)))
-public macro WidgetBuilder(args: Argument...) = #externalMacro(module: "SDUIMacrosInternal", type: "WidgetBuilderMacro")
+public macro WidgetBuilder(args: WidgetArgument...) = #externalMacro(module: "SDUIMacrosInternal", type: "WidgetBuilderMacro")

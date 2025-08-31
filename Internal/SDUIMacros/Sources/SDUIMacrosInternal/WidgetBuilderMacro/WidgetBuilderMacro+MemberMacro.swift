@@ -35,6 +35,15 @@ public struct WidgetBuilderMacro: MemberMacro {
             dataType = baseName
         }
         
+        if node.arguments == nil {
+            dataType = "EmptyWidgetData"
+        }
+        
+        if case .argumentList(let arguments) = node.arguments,
+           arguments.isEmpty {
+            dataType = "EmptyWidgetData"
+        }
+        
         var acl: DeclModifierSyntax = .init(name: .keyword(.internal))
         
         let aclModifiers: Set<String> = .init([TokenSyntax.keyword(.open), .keyword(.public), .keyword(.internal), .keyword(.fileprivate), .keyword(.private)].map(\.text))
