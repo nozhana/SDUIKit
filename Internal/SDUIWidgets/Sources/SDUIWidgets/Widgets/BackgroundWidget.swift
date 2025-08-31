@@ -21,10 +21,19 @@ public struct BackgroundWidget: View {
 #Preview {
     let json = """
 {
-    "background": "icon-globe",
+    "background": "#d2ee22",
     "content": {
         "padding": 16,
-        "content": "Hello, World!"
+        "content": {
+            "foregroundColor": "#0000aa",
+            "content": {
+                "text": "Hello, World!",
+                "properties": {
+                    "fontSize": 26,
+                    "fontWeight": 700
+                }
+            }
+        }
     }
 }
 """

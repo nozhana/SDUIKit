@@ -20,6 +20,8 @@ public struct AnyWidget: WidgetProtocol {
     // !!!: Order-sensitive!
     static let supportedWidgetTypes: [any WidgetProtocol.Type] = [
         LabelWidget.self,
+        ForegroundColorWidget.self,
+        ColorWidget.self,
         SystemImageWidget.self,
         ImageWidget.self,
         TextWidget.self,
