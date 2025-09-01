@@ -35,20 +35,14 @@ public struct ScaffoldWidget: WidgetView {
                         .navigationTitle("Invalid Path")
                     }
                 }
-                .if(data.title == nil && data.toolbar == nil) { content in
+                .ifLet(data.toolbar) { content, toolbar in
                     content
-                        .toolbar(.hidden)
-                } else: { content in
-                    content
-                        .ifLet(data.toolbar) { content, toolbar in
-                            content
-                                .toolbar {
-                                    ToolbarItemGroup(placement: .primaryAction) {
-                                        ForEach(Array(0..<toolbar.count), id: \.self) { index in
-                                            AnyWidgetView(toolbar[index])
-                                        }
-                                    }
+                        .toolbar {
+                            ToolbarItemGroup(placement: .primaryAction) {
+                                ForEach(Array(0..<toolbar.count), id: \.self) { index in
+                                    AnyWidgetView(toolbar[index])
                                 }
+                            }
                         }
                 }
 #if os(iOS)
@@ -56,9 +50,7 @@ public struct ScaffoldWidget: WidgetView {
                     content.navigationBarTitleDisplayMode(inline ? .inline : .large)
                 }
 #endif
-                .ifLet(data.title) { content, title in
-                    content.navigationTitle(title)
-                }
+                .navigationTitle(data.title)
                 .alert(alertItem?.value.0 ?? "Alert", isPresented: $showAlert, presenting: alertItem) { item in
                     let identifiedData = item.value.2.map(Identified<ShowAlertAction.ActionItem, UUID>.init)
                     ForEach(identifiedData) { identifiedItem in
@@ -82,7 +74,7 @@ public struct ScaffoldWidget: WidgetView {
 
 extension ScaffoldWidget {
     public struct Data: Decodable, Sendable {
-        public var title: String?
+        public var title: String
         public var inline: Bool?
         public var toolbar: [AnyWidget]?
         public var destinations: [String: ScaffoldDestinationWidget]?
@@ -96,7 +88,7 @@ extension ScaffoldWidget {
             case content
         }
         
-        public init(title: String? = nil, inline: Bool? = nil, toolbar: [AnyWidget]? = nil, destinations: [String: ScaffoldDestinationWidget]? = nil, content: AnyWidget) {
+        public init(title: String, inline: Bool? = nil, toolbar: [AnyWidget]? = nil, destinations: [String: ScaffoldDestinationWidget]? = nil, content: AnyWidget) {
             self.title = title
             self.inline = inline
             self.toolbar = toolbar

@@ -24,6 +24,7 @@ public struct AnyWidget: WidgetProtocol {
         ColorWidget.self,
         SystemImageWidget.self,
         ImageWidget.self,
+        ShapeWidget.self,
         TextWidget.self,
         ButtonWidget.self,
         PaddingWidget.self,
