@@ -45,7 +45,7 @@ public struct AsyncWidgetContainer: View {
                 }
                 .foregroundStyle(.red)
             case .loaded(let value?):
-                WidgetContainer(json: value)
+                WidgetContainer(value)
             case .loaded(nil):
                 ContentUnavailableView("Empty Content",
                                        systemImage: "questionmark.square.dashed",

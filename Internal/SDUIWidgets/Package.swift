@@ -14,10 +14,11 @@ let package = Package(
     dependencies: [
         .package(path: "../SDUIUtilities"),
         .package(path: "../SDUIMacros"),
+        .package(url: "https://github.com/jpsim/Yams.git", from: "6.0.1")
     ],
     targets: [
         .target(
-            name: "SDUIWidgets", dependencies: ["SDUIUtilities", "SDUIMacros"],
+            name: "SDUIWidgets", dependencies: ["SDUIUtilities", "SDUIMacros", "Yams"],
             swiftSettings: [.enableExperimentalFeature("BareSlashRegexLiterals")]),
     ]
 )

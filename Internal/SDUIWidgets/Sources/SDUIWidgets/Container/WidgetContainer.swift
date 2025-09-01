@@ -7,6 +7,7 @@
 
 import SDUICore
 import SwiftUI
+import Yams
 
 public struct WidgetContainer: View {
     private let widget: AnyWidget?
@@ -37,6 +38,46 @@ public struct WidgetContainer: View {
         }
     }
     
+    public init(yaml: Data) {
+        do {
+            self.widget = try AnyWidget(yaml: yaml)
+            self.error = nil
+        } catch {
+            self.widget = nil
+            self.error = error
+        }
+    }
+    
+    public init(yaml: String) {
+        do {
+            self.widget = try AnyWidget(yaml: yaml)
+            self.error = nil
+        } catch {
+            self.widget = nil
+            self.error = error
+        }
+    }
+    
+    public init(_ data: Data) {
+        do {
+            self.widget = try AnyWidget(data)
+            self.error = nil
+        } catch {
+            self.widget = nil
+            self.error = error
+        }
+    }
+    
+    public init(_ string: String) {
+        do {
+            self.widget = try AnyWidget(string)
+            self.error = nil
+        } catch {
+            self.widget = nil
+            self.error = error
+        }
+    }
+    
     public var body: some View {
         if let widget {
             AnyWidgetView(widget)
@@ -47,69 +88,4 @@ public struct WidgetContainer: View {
                 .background(.red)
         }
     }
-}
-
-#Preview {
-    let json = """
-{
-    "padding": 16,
-    "edges": "horizontal",
-    "content": {
-        "layout": "vertical",
-        "spacing": 32,
-        "items": [
-            {
-                "layout": "horizontal",
-                "alignment": "top",
-                "spacing": 16,
-                "items": [
-                    {
-                        "imageURL": "https://media.istockphoto.com/id/1587604256/photo/portrait-lawyer-and-black-woman-with-tablet-smile-and-happy-in-office-workplace-african.jpg?s=612x612&w=0&k=20&c=n9yulMNKdIYIQC-Qns8agFj6GBDbiKyPRruaUTh4MKs=",
-                        "ratio": 1,
-                        "resizeMode": "fill"
-                    },
-                    {
-                        "layout": "vertical",
-                        "alignment": "leading",
-                        "spacing": 12,
-                        "items": [
-                            {
-                                "text": "Jasmine",
-                                "properties": {
-                                    "fontSize": 24,
-                                    "fontWeight": 600
-                                }
-                            },
-                            { "text": "Sr. Product Manager" },
-                            {
-                                "text": "Codes for \\"fun\\", whatever that means.",
-                                "properties": {
-                                    "fontSize": 13,
-                                    "fontWeight": 300
-                                }
-                            }
-                        ]
-                    }
-                ]
-            },
-            {
-                "layout": "horizontal",
-                "spacing": 32,
-                "items": [
-                    {
-                        "title": { "text": "Talk to Jasmine" },
-                        "icon": { "systemImage": "phone.fill" }
-                    },
-                    {
-                        "title": { "text": "Text Jasmine" },
-                        "icon": { "systemImage": "message.fill" }
-                    }
-                ]
-            },
-        ]
-    }
-}
-"""
-    
-    WidgetContainer(json: json)
 }
