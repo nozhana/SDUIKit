@@ -35,6 +35,7 @@ public struct AnyWidget: WidgetProtocol {
         FrameWidget.self,
         LayoutWidget.self,
         ListSectionWidget.self,
+        TimerWidget.self,
     ]
     
     public init(from decoder: any Decoder) throws {

@@ -17,9 +17,16 @@ public struct TextWidget: WidgetView {
     
     public var body: some View {
         Text(data.content)
-            .font(.system(size: data.absoluteFontSize,
-                          weight: data.absoluteFontWeight.systemFontWeight,
-                          design: data.absoluteFontDesign.systemFontDesign))
+            .ifLet(data.properties) { content, properties in
+                content
+                    .ifLet(properties.fontSize) { content, size in
+                        content
+                            .font(.system(size: size))
+                    }
+                    .fontWeight(properties.fontWeight?.systemFontWeight)
+                    .fontDesign(properties.fontDesign?.systemFontDesign)
+                    .fontWidth(properties.fontWidth?.systemFontWidth)
+            }
     }
 }
 
@@ -31,18 +38,6 @@ extension TextWidget {
         public enum CodingKeys: String, CodingKey {
             case content = "text"
             case properties
-        }
-        
-        fileprivate var absoluteFontSize: Double {
-            properties?.fontSize ?? 17
-        }
-        
-        fileprivate var absoluteFontWeight: Properties.FontWeight {
-            properties?.fontWeight ?? .regular
-        }
-        
-        fileprivate var absoluteFontDesign: Properties.FontDesign {
-            properties?.fontDesign ?? .sans
         }
         
         public init(content: String, properties: Properties? = nil) {
@@ -68,15 +63,17 @@ extension TextWidget {
             public var fontSize: Double?
             public var fontWeight: FontWeight?
             public var fontDesign: FontDesign?
+            public var fontWidth: FontWidth?
             
             public enum CodingKeys: String, CodingKey {
-                case fontSize, fontWeight, fontDesign
+                case fontSize, fontWeight, fontDesign, fontWidth
             }
             
-            public init(fontSize: Double? = nil, fontWeight: FontWeight? = nil, fontDesign: FontDesign? = nil) {
+            public init(fontSize: Double? = nil, fontWeight: FontWeight? = nil, fontDesign: FontDesign? = nil, fontWidth: FontWidth? = nil) {
                 self.fontSize = fontSize
                 self.fontWeight = fontWeight
                 self.fontDesign = fontDesign
+                self.fontWidth = fontWidth
             }
             
             public init(from decoder: any Decoder) throws {
@@ -93,7 +90,8 @@ extension TextWidget {
                     let fontSize = try container.decodeIfPresent(Double.self, forKey: .fontSize)
                     let fontWeight = try container.decodeIfPresent(FontWeight.self, forKey: .fontWeight)
                     let fontDesign = try container.decodeIfPresent(FontDesign.self, forKey: .fontDesign)
-                    self.init(fontSize: fontSize, fontWeight: fontWeight, fontDesign: fontDesign)
+                    let fontWidth = try container.decodeIfPresent(FontWidth.self, forKey: .fontWidth)
+                    self.init(fontSize: fontSize, fontWeight: fontWeight, fontDesign: fontDesign, fontWidth: fontWidth)
                 }
             }
             
@@ -112,6 +110,7 @@ extension TextWidget {
                     fontWeight = nil
                 }
                 fontDesign = matches[safe: 2].map { FontDesign(rawValue: $0) } ?? nil
+                fontWidth = matches[safe: 3].map { FontWidth(rawValue: $0) } ?? nil
             }
             
             public enum FontWeight: Int, CaseIterable, Decodable, Sendable {
@@ -184,6 +183,19 @@ extension TextWidget {
                     case .serif: .serif
                     case .rounded: .rounded
                     case .monospaced: .monospaced
+                    }
+                }
+            }
+            
+            public enum FontWidth: String, CaseIterable, Decodable, Sendable {
+                case compressed, condensed, standard, expanded
+                
+                public var systemFontWidth: Font.Width {
+                    switch self {
+                    case .compressed: .compressed
+                    case .condensed: .condensed
+                    case .standard: .standard
+                    case .expanded: .expanded
                     }
                 }
             }
