@@ -5,15 +5,12 @@
 //  Created by Nozhan A. on 8/30/25.
 //
 
+import SDUIUtilities
+import SDUIMacros
 import SwiftUI
 
-public struct ImageWidget: WidgetView {
-    public var data: Data
-    
-    nonisolated public init(data: Data) {
-        self.data = data
-    }
-    
+@WidgetBuilder(args: .custom("imageURL", type: "URL"), .double("ratio", optional: true), .custom("resizeMode", type: "ResizeMode", optional: true))
+public struct ImageWidget: View {
     public func platformImage(for url: URL) -> Image? {
 #if canImport(UIKit)
         if let image = UIImage(contentsOfFile: url.path()) {
@@ -67,20 +64,6 @@ public struct ImageWidget: WidgetView {
     }
 }
 
-extension ImageWidget {
-    public struct Data: Decodable, Sendable {
-        public var imageURL: URL
-        public var ratio: Double?
-        public var resizeMode: ResizeMode?
-        
-        public init(imageURL: URL, ratio: Double? = nil, resizeMode: ResizeMode? = nil) {
-            self.imageURL = imageURL
-            self.ratio = ratio
-            self.resizeMode = resizeMode
-        }
-    }
-}
-
 public enum ResizeMode: String, CaseIterable, Decodable, Sendable {
     case fit
     case fill
@@ -91,4 +74,42 @@ public enum ResizeMode: String, CaseIterable, Decodable, Sendable {
         case .fill: .fill
         }
     }
+}
+
+extension ImageWidget.Data {
+    public enum CodingKeys: String, CodingKey {
+        case imageURL, ratio, resizeMode
+    }
+    
+    public init(from decoder: any Decoder) throws {
+        if let container = try? decoder.singleValueContainer(),
+           let stringKey = try? container.decode(String.self),
+           let match = stringKey.wholeMatch(of: /(?:img|image)-(.+)/)?.output.1 {
+            let components = match.split(separator: "-", omittingEmptySubsequences: false).map(String.init)
+            guard let first = components.first,
+                  let url = URL(string: first) else {
+                throw WidgetError.unknownDataType(stringKey)
+            }
+            self.imageURL = url
+            self.ratio = components[safe: 1].map { Double($0) } ?? nil
+            self.resizeMode = components[safe: 2].map { ResizeMode(rawValue: $0) } ?? nil
+        } else {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            let url = try container.decode(URL.self, forKey: .imageURL)
+            let ratio = try container.decodeIfPresent(Double.self, forKey: .ratio)
+            let resizeMode = try container.decodeIfPresent(ResizeMode.self, forKey: .resizeMode)
+            self.imageURL = url
+            self.ratio = ratio
+            self.resizeMode = resizeMode
+        }
+    }
+}
+
+#Preview {
+    let yaml = """
+imageURL: https://upload.wikimedia.org/wikipedia/commons/4/43/Minimalist_info_Icon.png
+ratio: 1.5
+"""
+    
+    WidgetContainer(yaml: yaml)
 }
