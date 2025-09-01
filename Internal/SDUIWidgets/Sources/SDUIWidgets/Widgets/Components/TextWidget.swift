@@ -5,6 +5,7 @@
 //  Created by Nozhan A. on 8/30/25.
 //
 
+import SDUIUtilities
 import SwiftUI
 
 public struct TextWidget: WidgetView {
@@ -56,9 +57,10 @@ extension TextWidget {
                 self.properties = try container.decodeIfPresent(TextWidget.Data.Properties.self, forKey: TextWidget.Data.CodingKeys.properties)
             } catch {
                 let container = try decoder.singleValueContainer()
-                let string = try container.decode(String.self)
-                self.content = string
-                self.properties = nil
+                let stringKey = try container.decode(String.self)
+                let matches = stringKey.split(separator: "-", omittingEmptySubsequences: false).map(String.init)
+                self.content = matches.first ?? ""
+                self.properties = Properties(matches: Array(matches.dropFirst()))
             }
         }
         
@@ -67,10 +69,49 @@ extension TextWidget {
             public var fontWeight: FontWeight?
             public var fontDesign: FontDesign?
             
+            public enum CodingKeys: String, CodingKey {
+                case fontSize, fontWeight, fontDesign
+            }
+            
             public init(fontSize: Double? = nil, fontWeight: FontWeight? = nil, fontDesign: FontDesign? = nil) {
                 self.fontSize = fontSize
                 self.fontWeight = fontWeight
                 self.fontDesign = fontDesign
+            }
+            
+            public init(from decoder: any Decoder) throws {
+                if let container = try? decoder.singleValueContainer(),
+                   let stringKey = try? container.decode(String.self) {
+                    // let matches = stringKey.matches(of: /[^-]+|\B(?=-)/)
+                    //     .map(\.output)
+                    //     .map(String.init)
+                    let matches = stringKey.split(separator: "-", omittingEmptySubsequences: false)
+                        .map(String.init)
+                    self.init(matches: matches)
+                } else {
+                    let container = try decoder.container(keyedBy: CodingKeys.self)
+                    let fontSize = try container.decodeIfPresent(Double.self, forKey: .fontSize)
+                    let fontWeight = try container.decodeIfPresent(FontWeight.self, forKey: .fontWeight)
+                    let fontDesign = try container.decodeIfPresent(FontDesign.self, forKey: .fontDesign)
+                    self.init(fontSize: fontSize, fontWeight: fontWeight, fontDesign: fontDesign)
+                }
+            }
+            
+            fileprivate init(matches: [String]) {
+                fontSize = matches.first.map { Double($0) } ?? nil
+                if let match2 = matches[safe: 1] {
+                    if let weight = FontWeight(name: match2) {
+                        fontWeight = weight
+                    } else if let integer = Int(match2),
+                              let weight = FontWeight(rawValue: integer) {
+                        fontWeight = weight
+                    } else {
+                        fontWeight = nil
+                    }
+                } else {
+                    fontWeight = nil
+                }
+                fontDesign = matches[safe: 2].map { FontDesign(rawValue: $0) } ?? nil
             }
             
             public enum FontWeight: Int, CaseIterable, Decodable, Sendable {
@@ -83,6 +124,30 @@ extension TextWidget {
                 case heavy = 800
                 case black = 900
                 
+                public init(from decoder: any Decoder) throws {
+                    let container = try decoder.singleValueContainer()
+                    if let name = try? container.decode(String.self),
+                       let weight = FontWeight(name: name) {
+                        self = weight
+                    } else {
+                        let integer = try container.decode(Int.self)
+                        guard let weight = FontWeight(rawValue: integer) else {
+                            throw WidgetError.unknownDataType("Weight \(integer)")
+                        }
+                        self = weight
+                    }
+                }
+                
+                public init?(name: String) {
+                    for weight in FontWeight.allCases {
+                        if name == weight.name {
+                            self = weight
+                            return
+                        }
+                    }
+                    return nil
+                }
+                
                 public var systemFontWeight: Font.Weight {
                     switch self {
                     case .ultralight: .ultraLight
@@ -93,6 +158,19 @@ extension TextWidget {
                     case .bold: .bold
                     case .heavy: .heavy
                     case .black: .black
+                    }
+                }
+                
+                public var name: String {
+                    switch self {
+                    case .ultralight: "ultralight"
+                    case .light: "light"
+                    case .regular: "regular"
+                    case .medium: "medium"
+                    case .semibold: "semibold"
+                    case .bold: "bold"
+                    case .heavy: "heavy"
+                    case .black: "black"
                     }
                 }
             }
@@ -123,4 +201,58 @@ extension TextWidget: ExpressibleByStringInterpolation {
     nonisolated public init(stringInterpolation: DefaultStringInterpolation) {
         self.init(stringLiteral: stringInterpolation.description)
     }
+}
+
+#Preview("Simple") {
+    let json = """
+{
+    "title": "Hello, World!--medium",
+    "icon": "icon-globe"
+}
+"""
+    
+    WidgetContainer(json: json)
+}
+
+#Preview("Shorthand") {
+    let json = """
+{
+    "title": "Hello, World!-26-bold-serif",
+    "icon": "icon-globe"
+}
+"""
+    
+    WidgetContainer(json: json)
+}
+
+#Preview("Regular") {
+    let json = """
+{
+    "title": {
+        "text": "Hello, World!",
+        "properties": "24-bold-rounded"
+    },
+    "icon": "icon-globe"
+}
+"""
+    
+    WidgetContainer(json: json)
+}
+
+#Preview("Expanded") {
+    let json = """
+{
+    "title": {
+        "text": "Hello, World!",
+        "properties": {
+            "fontSize": 36,
+            "fontWeight": 900,
+            "fontDesign": "monospaced"
+        }
+    },
+    "icon": "icon-globe"
+}
+"""
+    
+    WidgetContainer(json: json)
 }
