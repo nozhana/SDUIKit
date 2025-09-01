@@ -47,9 +47,24 @@ public struct ListSectionWidget: WidgetView {
     }
     
     public var body: some View {
-        if let title = data.title {
+        if let title = data.title,
+           let footer = data.footer {
+            Section {
+                dynamicContent
+            } header: {
+                Text(title)
+            } footer: {
+                Text(footer)
+            }
+        } else if let title = data.title {
             Section(title) {
                 dynamicContent
+            }
+        } else if let footer = data.footer {
+            Section {
+                dynamicContent
+            } footer: {
+                Text(footer)
             }
         } else {
             Section {
@@ -62,17 +77,13 @@ public struct ListSectionWidget: WidgetView {
 extension ListSectionWidget {
     public struct Data: Decodable, Sendable {
         public var title: String?
+        public var footer: String?
         public var items: [AnyWidget]
         
         public enum CodingKeys: String, CodingKey {
             case title = "section"
+            case footer
             case items
-        }
-        
-        public init(from decoder: any Decoder) throws {
-            let container: KeyedDecodingContainer<ListSectionWidget.Data.CodingKeys> = try decoder.container(keyedBy: ListSectionWidget.Data.CodingKeys.self)
-            self.title = try container.decode(String?.self, forKey: ListSectionWidget.Data.CodingKeys.title)
-            self.items = try container.decode([AnyWidget].self, forKey: ListSectionWidget.Data.CodingKeys.items)
         }
         
         public init(title: String? = nil, items: [AnyWidget] = []) {
@@ -94,6 +105,7 @@ extension ListSectionWidget {
         },
         {
             "section": "Settings",
+            "footer": "This is your settings panel.",
             "items": [
                 { "text": "Item 1" },
                 { "text": "Item 2" }
@@ -103,5 +115,5 @@ extension ListSectionWidget {
 }
 """
     
-    AnyWidgetView(try! .init(json: json))
+    WidgetContainer(json: json)
 }

@@ -42,6 +42,9 @@ extension FrameWidget.Data {
             let width = try container.decodeIfPresent(Double.self, forKey: .width)
             let height = try container.decodeIfPresent(Double.self, forKey: .height)
             let alignment = try container.decodeIfPresent(Alignment.self, forKey: .alignment)
+            guard size != nil || width != nil || height != nil else {
+                throw WidgetError.unsupportedWidgetType
+            }
             self.width = width ?? size
             self.height = height ?? size
             self.alignment = alignment

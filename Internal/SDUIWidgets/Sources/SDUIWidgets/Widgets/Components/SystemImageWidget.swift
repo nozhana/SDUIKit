@@ -37,18 +37,20 @@ extension SystemImageWidget {
         
         public init(from decoder: any Decoder) throws {
             do {
+                let container = try decoder.singleValueContainer()
+                let stringKey = try container.decode(String.self)
+                guard let components = stringKey.wholeMatch(of: /icon-(.+)/)?.output.1
+                    .split(separator: "-", omittingEmptySubsequences: false)
+                    .map(String.init),
+                      let name = components.first else {
+                    throw WidgetError.unknownDataType(stringKey)
+                }
+                self.name = name
+                self.resizeMode = components[safe: 1].map { ResizeMode(rawValue: $0) } ?? nil
+            } catch {
                 let container = try decoder.container(keyedBy: SystemImageWidget.Data.CodingKeys.self)
                 self.name = try container.decode(String.self, forKey: SystemImageWidget.Data.CodingKeys.name)
                 self.resizeMode = try container.decodeIfPresent(ResizeMode.self, forKey: SystemImageWidget.Data.CodingKeys.resizeMode)
-            } catch {
-                let container = try decoder.singleValueContainer()
-                let stringKey = try container.decode(String.self)
-                guard stringKey.starts(with: /icon-/) else {
-                    throw WidgetError.unknownDataType(stringKey)
-                }
-                let iconKey = String(stringKey.dropFirst(5))
-                self.name = iconKey
-                self.resizeMode = nil
             }
         }
         
