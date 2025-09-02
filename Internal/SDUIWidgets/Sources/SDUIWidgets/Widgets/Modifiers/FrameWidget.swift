@@ -24,6 +24,17 @@ extension FrameWidget.Data {
         case width, height, size, alignment, content
     }
     
+    public func encode(to encoder: any Encoder) throws {
+        guard width != nil || height != nil else {
+            throw WidgetError.unsupportedWidgetType
+        }
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encodeIfPresent(width, forKey: .width)
+        try container.encodeIfPresent(height, forKey: .height)
+        try container.encodeIfPresent(alignment, forKey: .alignment)
+        try container.encode(content, forKey: .content)
+    }
+    
     public init(from decoder: any Decoder) throws {
         if let container = try? decoder.singleValueContainer(),
            let stringKey = try? container.decode(String.self),

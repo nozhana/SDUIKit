@@ -42,6 +42,14 @@ extension TimerWidget.Data {
         case deadline, countdown, properties
     }
     
+    public func encode(to encoder: any Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        let deadlineISO8601 = deadline?.formatted(.iso8601)
+        try container.encodeIfPresent(deadline, forKey: .deadline)
+        try container.encodeIfPresent(countdown, forKey: .countdown)
+        try container.encodeIfPresent(properties, forKey: .properties)
+    }
+    
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let deadlineISO8601 = try container.decodeIfPresent(String.self, forKey: .deadline)

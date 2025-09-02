@@ -37,7 +37,7 @@ public struct LayoutWidget: WidgetView {
 }
 
 extension LayoutWidget {
-    public struct Data: Decodable, Sendable {
+    public struct Data: Codable, Sendable {
         public var layout: Layout
         public var scroll: Axis.Set?
         public var alignment: Alignment?
@@ -52,7 +52,7 @@ extension LayoutWidget {
             self.items = items
         }
         
-        public enum Layout: String, CaseIterable, Decodable, Sendable {
+        public enum Layout: String, CaseIterable, Codable, Sendable {
             case horizontal, vertical, perpendicular, list
         }
     }

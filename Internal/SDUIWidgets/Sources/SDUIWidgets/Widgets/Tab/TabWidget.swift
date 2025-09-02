@@ -54,12 +54,12 @@ public struct TabItemWidget: View {
 }
 
 
-public enum TabStyle: Decodable, Sendable, RawRepresentable {
+public enum TabStyle: Codable, Sendable, RawRepresentable {
     case automatic, sidebarAdaptable, tabBarOnly
     case grouped
     case page(indexDisplayMode: PageIndexDisplayMode = .automatic)
     
-    public enum PageIndexDisplayMode: String, CaseIterable, Decodable, Sendable {
+    public enum PageIndexDisplayMode: String, CaseIterable, Codable, Sendable {
         case never, always, automatic
         
 #if os(iOS)

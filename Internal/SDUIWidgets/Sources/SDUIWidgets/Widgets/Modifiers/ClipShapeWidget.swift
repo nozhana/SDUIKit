@@ -21,7 +21,7 @@ public struct ClipShapeWidget: WidgetView {
 }
 
 extension ClipShapeWidget {
-    public struct Data: Decodable, Sendable {
+    public struct Data: Codable, Sendable {
         public var shape: Shape
         public var eoFill: Bool?
         public var antialiased: Bool?
@@ -36,7 +36,7 @@ extension ClipShapeWidget {
     }
 }
 
-public enum Shape: Decodable, Sendable, RawRepresentable {
+public enum Shape: Codable, Sendable, RawRepresentable {
     case circle, capsule, rect
     case roundedRect(cornerRadius: Double)
     

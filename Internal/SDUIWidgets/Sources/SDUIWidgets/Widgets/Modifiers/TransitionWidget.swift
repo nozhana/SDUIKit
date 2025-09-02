@@ -26,7 +26,7 @@ public struct TransitionWidget: View {
     }
 }
 
-public enum Transition: Decodable, Sendable {
+public enum Transition: Codable, Sendable {
     case `default`
     case fade
     case blurReplace
@@ -39,7 +39,7 @@ public enum Transition: Decodable, Sendable {
     }
 }
 
-extension Transition {
+extension Transition: RawRepresentable {
     @MainActor
     public var systemTransition: AnyTransition {
         switch self {
@@ -53,17 +53,48 @@ extension Transition {
         }
     }
     
-    public init(from decoder: any Decoder) throws {
-        let container = try decoder.singleValueContainer()
-        let stringKey = try container.decode(String.self)
+    public init?(rawValue stringKey: String) {
         let matches = stringKey.matches(of: /(fade|blur|move|offset)(?:-([^|]+))?/)
         guard !matches.isEmpty else {
-            throw WidgetError.unknownDataType(stringKey)
+            return nil
         }
         var transition = Transition.default
         for match in matches {
-            let next = try Transition(output: match.output)
+            guard let next = try? Transition(output: match.output) else {
+                return nil
+            }
             transition = .combined(transition, next)
+        }
+        self = transition
+    }
+    
+    public var rawValue: String {
+        switch self {
+        case .default:
+            "default"
+        case .fade:
+            "fade"
+        case .blurReplace:
+            "blur"
+        case .move(let edge):
+            "move-\(edge.rawValue)"
+        case .offset(let x, let y):
+            "offset-x:\(x),y:\(y)"
+        case .combined(let transition, let transition2):
+            "\(transition.rawValue)|\(transition2.rawValue)"
+        }
+    }
+    
+    public func encode(to encoder: any Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(rawValue)
+    }
+    
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        let stringKey = try container.decode(String.self)
+        guard let transition = Transition(rawValue: stringKey) else {
+            throw WidgetError.unsupportedWidgetType
         }
         self = transition
     }
@@ -102,7 +133,7 @@ extension Transition {
     }
 }
 
-public enum Animation: Decodable, Sendable {
+public enum Animation: Codable, Sendable {
     case `default`
     case spring(duration: TimeInterval = defaultDuration, bounce: Double = .zero)
     case smooth(duration: TimeInterval = defaultDuration, extraBounce: Double = .zero)
@@ -166,6 +197,48 @@ public enum Animation: Decodable, Sendable {
     
     public enum CodingKeys: String, CodingKey {
         case curve, duration, bounce, extraBounce, delay, repeatCount, repeatForever, autoreverses, speed
+    }
+    
+    public func encode(to encoder: any Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        switch self {
+        case .default:
+            try container.encode("default", forKey: .curve)
+        case .spring(let duration, let bounce):
+            try container.encode("spring", forKey: .curve)
+            try container.encode(duration, forKey: .duration)
+            try container.encode(bounce, forKey: .bounce)
+        case .smooth(let duration, let extraBounce):
+            try container.encode("smooth", forKey: .curve)
+            try container.encode(duration, forKey: .duration)
+            try container.encode(extraBounce, forKey: .extraBounce)
+        case .snappy(let duration, let extraBounce):
+            try container.encode("snappy", forKey: .curve)
+            try container.encode(duration, forKey: .duration)
+            try container.encode(extraBounce, forKey: .extraBounce)
+        case .bouncy(let duration, let extraBounce):
+            try container.encode("bouncy", forKey: .curve)
+            try container.encode(duration, forKey: .duration)
+            try container.encode(extraBounce, forKey: .extraBounce)
+        case .interactiveSpring(let duration, let extraBounce):
+            try container.encode("interactiveSpring", forKey: .curve)
+            try container.encode(duration, forKey: .duration)
+            try container.encode(extraBounce, forKey: .extraBounce)
+        case .delayed(let animation, let delay):
+            try container.encode(delay, forKey: .delay)
+            try animation.encode(to: encoder)
+        case .repeated(let animation, let repeatCount?, let autoreverses):
+            try container.encode(repeatCount, forKey: .repeatCount)
+            try container.encode(autoreverses, forKey: .autoreverses)
+            try animation.encode(to: encoder)
+        case .repeated(let animation, nil, let autoreverses):
+            try container.encode(true, forKey: .repeatForever)
+            try container.encode(autoreverses, forKey: .autoreverses)
+            try animation.encode(to: encoder)
+        case .speedModified(let animation, let speed):
+            try container.encode(speed, forKey: .speed)
+            try animation.encode(to: encoder)
+        }
     }
     
     public init(from decoder: any Decoder) throws {

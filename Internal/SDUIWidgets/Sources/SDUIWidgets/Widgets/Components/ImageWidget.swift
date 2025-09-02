@@ -64,7 +64,7 @@ public struct ImageWidget: View {
     }
 }
 
-public enum ResizeMode: String, CaseIterable, Decodable, Sendable {
+public enum ResizeMode: String, CaseIterable, Codable, Sendable {
     case fit
     case fill
     

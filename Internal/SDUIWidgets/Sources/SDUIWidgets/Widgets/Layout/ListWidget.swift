@@ -24,7 +24,7 @@ public struct ListWidget: WidgetView {
 }
 
 extension ListWidget {
-    public struct Data: Decodable, Sendable {
+    public struct Data: Codable, Sendable {
         public var items: [AnyWidget]
         
         public init(items: [AnyWidget] = []) {
@@ -75,7 +75,7 @@ public struct ListSectionWidget: WidgetView {
 }
 
 extension ListSectionWidget {
-    public struct Data: Decodable, Sendable {
+    public struct Data: Codable, Sendable {
         public var title: String?
         public var footer: String?
         public var items: [AnyWidget]

@@ -31,13 +31,21 @@ public struct TextWidget: WidgetView {
 }
 
 extension TextWidget {
-    public struct Data: Decodable, Sendable {
+    public struct Data: Codable, Sendable {
         public var content: String
         public var properties: Properties?
         
         public enum CodingKeys: String, CodingKey {
             case content = "text"
             case properties
+        }
+        
+        public func encode(to encoder: any Encoder) throws {
+            var container = encoder.container(keyedBy: CodingKeys.self)
+            try container.encode(content, forKey: .content)
+            if let properties, !properties.isEmpty {
+                try container.encode(properties, forKey: .properties)
+            }
         }
         
         public init(content: String, properties: Properties? = nil) {
@@ -59,11 +67,17 @@ extension TextWidget {
             }
         }
         
-        public struct Properties: Decodable, Sendable {
+        public struct Properties: Codable, Sendable, Equatable {
             public var fontSize: Double?
             public var fontWeight: FontWeight?
             public var fontDesign: FontDesign?
             public var fontWidth: FontWidth?
+            
+            public static let empty = Properties()
+            
+            var isEmpty: Bool {
+                self == Properties.empty
+            }
             
             public enum CodingKeys: String, CodingKey {
                 case fontSize, fontWeight, fontDesign, fontWidth
@@ -113,7 +127,7 @@ extension TextWidget {
                 fontWidth = matches[safe: 3].map { FontWidth(rawValue: $0) } ?? nil
             }
             
-            public enum FontWeight: Int, CaseIterable, Decodable, Sendable {
+            public enum FontWeight: Int, CaseIterable, Codable, Sendable {
                 case ultralight = 200
                 case light = 300
                 case regular = 400
@@ -174,7 +188,7 @@ extension TextWidget {
                 }
             }
             
-            public enum FontDesign: String, CaseIterable, Decodable, Sendable {
+            public enum FontDesign: String, CaseIterable, Codable, Sendable {
                 case sans, serif, rounded, monospaced
                 
                 public var systemFontDesign: Font.Design {
@@ -187,7 +201,7 @@ extension TextWidget {
                 }
             }
             
-            public enum FontWidth: String, CaseIterable, Decodable, Sendable {
+            public enum FontWidth: String, CaseIterable, Codable, Sendable {
                 case compressed, condensed, standard, expanded
                 
                 public var systemFontWidth: Font.Width {

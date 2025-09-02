@@ -24,7 +24,7 @@ public struct BorderWidget: WidgetView {
 }
 
 extension BorderWidget {
-    public struct Data: Decodable, Sendable {
+    public struct Data: Codable, Sendable {
         public var length: Double
         public var color: String?
         public var shape: Shape?

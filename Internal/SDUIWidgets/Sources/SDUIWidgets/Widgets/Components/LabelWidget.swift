@@ -24,7 +24,7 @@ public struct LabelWidget: WidgetView {
 }
 
 extension LabelWidget {
-    public struct Data: Decodable, Sendable {
+    public struct Data: Codable, Sendable {
         public var title: AnyWidget
         public var icon: AnyWidget
         

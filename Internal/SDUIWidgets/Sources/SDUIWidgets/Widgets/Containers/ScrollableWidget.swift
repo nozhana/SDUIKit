@@ -22,22 +22,27 @@ public struct ScrollableWidget: WidgetView {
 }
 
 extension ScrollableWidget {
-    public struct Data: Decodable, Sendable {
+    public struct Data: Codable, Sendable {
         public var axes: Axis.Set?
         public var content: AnyWidget
     }
 }
 
-public enum Axis: String, CaseIterable, Decodable, Sendable {
+public enum Axis: String, CaseIterable, Codable, Sendable {
     case horizontal, vertical
 }
 
 extension Axis {
-    public struct Set: OptionSet, Decodable, Sendable {
+    public struct Set: OptionSet, Codable, Sendable {
         public var rawValue: Int8
         
         public init(rawValue: Int8 = 0) {
             self.rawValue = rawValue
+        }
+        
+        public func encode(to encoder: any Encoder) throws {
+            var container = encoder.singleValueContainer()
+            try container.encode(rawValue)
         }
         
         public init(from decoder: any Decoder) throws {

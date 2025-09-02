@@ -37,7 +37,7 @@ public struct ScaffoldDestinationWidget: WidgetView {
 }
 
 extension ScaffoldDestinationWidget {
-    public struct Data: Decodable, Sendable {
+    public struct Data: Codable, Sendable {
         public var title: String?
         public var inline: Bool?
         public var toolbar: [AnyWidget]?

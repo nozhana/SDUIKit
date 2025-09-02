@@ -24,7 +24,7 @@ public struct StackWidget: WidgetView {
 }
 
 extension StackWidget {
-    public struct Data: Decodable, Sendable {
+    public struct Data: Codable, Sendable {
         public var alignment: Alignment?
         public var items: [AnyWidget]
         
@@ -35,7 +35,7 @@ extension StackWidget {
     }
 }
 
-public enum Alignment: String, Decodable, Sendable {
+public enum Alignment: String, Codable, Sendable {
     case top, bottom, leading, trailing, center
     
     public var horizontalAlignment: HorizontalAlignment? {

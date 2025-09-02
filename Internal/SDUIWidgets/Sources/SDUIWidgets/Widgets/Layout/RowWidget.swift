@@ -24,7 +24,7 @@ public struct RowWidget: WidgetView {
 }
 
 extension RowWidget {
-    public struct Data: Decodable, Sendable {
+    public struct Data: Codable, Sendable {
         public var alignment: VerticalAlignment?
         public var spacing: Double?
         public var items: [AnyWidget]
@@ -37,7 +37,7 @@ extension RowWidget {
     }
 }
 
-public enum VerticalAlignment: String, CaseIterable, Decodable, Sendable {
+public enum VerticalAlignment: String, CaseIterable, Codable, Sendable {
     case top, center, bottom, firstTextBaseline, lastTextBaseline
     
     var systemAlignment: SwiftUI.VerticalAlignment {

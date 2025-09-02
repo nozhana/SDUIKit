@@ -26,7 +26,7 @@ public struct SystemImageWidget: WidgetView {
 }
 
 extension SystemImageWidget {
-    public struct Data: Decodable, Sendable {
+    public struct Data: Codable, Sendable {
         public var name: String
         public var resizeMode: ResizeMode?
         

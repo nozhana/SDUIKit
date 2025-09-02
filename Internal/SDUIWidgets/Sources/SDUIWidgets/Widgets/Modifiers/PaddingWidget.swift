@@ -21,7 +21,7 @@ public struct PaddingWidget: WidgetView {
 }
 
 extension PaddingWidget {
-    public struct Data: Decodable, Sendable {
+    public struct Data: Codable, Sendable {
         public var length: Double
         public var edges: Edges?
         public var content: AnyWidget
@@ -40,7 +40,7 @@ extension PaddingWidget {
     }
 }
 
-public enum Edge: String, CaseIterable, Decodable, Sendable {
+public enum Edge: String, CaseIterable, Codable, Sendable {
     case top, leading, bottom, trailing
     
     fileprivate var index: Int {
@@ -62,11 +62,16 @@ public enum Edge: String, CaseIterable, Decodable, Sendable {
     }
 }
 
-public struct Edges: Decodable, Sendable, RawRepresentable, OptionSet {
+public struct Edges: Codable, Sendable, RawRepresentable, OptionSet {
     public let rawValue: Int8
     
     public init(rawValue: Int8) {
         self.rawValue = rawValue
+    }
+    
+    public func encode(to encoder: any Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(rawValue)
     }
     
     public init(from decoder: any Decoder) throws {

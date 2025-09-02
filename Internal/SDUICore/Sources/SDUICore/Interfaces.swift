@@ -7,14 +7,18 @@
 
 import Foundation
 
-public protocol WidgetProtocol: Decodable, Sendable {
-    associatedtype Data: Decodable, Sendable
+public protocol WidgetProtocol: Codable, Sendable {
+    associatedtype Data: Codable, Sendable
     var data: Data { get }
     init(data: Data)
 }
 
-public extension WidgetProtocol {
-    init(from decoder: any Decoder) throws {
+extension WidgetProtocol {
+    public init(from decoder: any Decoder) throws {
         self.init(data: try Data(from: decoder))
+    }
+    
+    public func encode(to encoder: any Encoder) throws {
+        try data.encode(to: encoder)
     }
 }

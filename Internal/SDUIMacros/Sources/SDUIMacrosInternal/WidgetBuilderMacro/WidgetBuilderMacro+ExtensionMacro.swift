@@ -123,7 +123,7 @@ extension WidgetBuilderMacro: ExtensionMacro {
             return [extensionExpr]
         }
         
-        var dataDecl = try StructDeclSyntax("\(acl) struct Data: Decodable, Sendable {}")
+        var dataDecl = try StructDeclSyntax("\(acl) struct Data: Codable, Sendable {}")
         
         dataDecl.memberBlock = MemberBlockSyntax(members: MemberBlockItemListSyntax(variables.map { MemberBlockItemSyntax(decl: $0) }))
         

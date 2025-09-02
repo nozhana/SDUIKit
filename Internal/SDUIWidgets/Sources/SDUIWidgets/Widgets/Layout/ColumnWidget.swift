@@ -24,7 +24,7 @@ public struct ColumnWidget: WidgetView {
 }
 
 extension ColumnWidget {
-    public struct Data: Decodable, Sendable {
+    public struct Data: Codable, Sendable {
         public var alignment: HorizontalAlignment?
         public var spacing: Double?
         public var items: [AnyWidget]
@@ -37,7 +37,7 @@ extension ColumnWidget {
     }
 }
 
-public enum HorizontalAlignment: String, CaseIterable, Decodable, Sendable {
+public enum HorizontalAlignment: String, CaseIterable, Codable, Sendable {
     case leading, center, trailing
     
     var systemAlignment: SwiftUI.HorizontalAlignment {

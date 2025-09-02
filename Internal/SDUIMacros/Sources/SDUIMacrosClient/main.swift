@@ -13,10 +13,10 @@ struct Foo: View {
 @WidgetBuilder
 struct Bar {}
 
-enum Baz: Decodable, Sendable {
+enum Baz: Codable, Sendable {
     case boo
     
-    enum Boo: Decodable, Sendable {
+    enum Boo: Codable, Sendable {
         case meow
     }
 }
