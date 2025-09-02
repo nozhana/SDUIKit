@@ -12,5 +12,6 @@ import SwiftSyntaxMacros
 struct SDUIMacrosPlugin: CompilerPlugin {
     let providingMacros: [Macro.Type] = [
         WidgetBuilderMacro.self,
+        WidgetRegistryMacro.self,
     ]
 }

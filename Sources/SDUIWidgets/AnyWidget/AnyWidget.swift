@@ -47,7 +47,7 @@ public struct AnyWidget: WidgetProtocol {
     
     public init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
-        for widgetType in AnyWidget.supportedWidgetTypes {
+        for widgetType in (WidgetRegistrar.shared.widgetTypes + AnyWidget.supportedWidgetTypes) {
             if let widget = try? container.decode(widgetType) {
                 self.widget = widget
                 return

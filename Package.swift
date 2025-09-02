@@ -2,26 +2,51 @@
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
+import CompilerPluginSupport
 
 let package = Package(
     name: "SDUIKit",
     platforms: [.macOS(.v14), .iOS(.v17), .macCatalyst(.v17)],
     products: [
-        .library(
-            name: "SDUIKit",
-            targets: ["SDUIKit"]),
+        .library(name: "SDUIKit", targets: ["SDUIKit"]),
         .executable(name: "SDUIKitClient",
                     targets: ["SDUIKitClient"]),
     ],
     dependencies: [
-        .package(path: "Internal/SDUICore"),
-        .package(path: "Internal/SDUIWidgets"),
-        .package(path: "Internal/SDUIMacros"),
+        .package(url: "https://github.com/swiftlang/swift-syntax.git", from: "600.0.0-latest"),
+        .package(url: "https://github.com/jpsim/Yams.git", from: "6.0.1"),
     ],
     targets: [
         .target(
-            name: "SDUIKit", dependencies: ["SDUICore", "SDUIWidgets", "SDUIMacros"]),
+            name: "SDUIKit",
+            dependencies: ["SDUIWidgets"]
+        ),
+        
+        .target(
+            name: "SDUICore"
+        ),
+        
+        .target(
+            name: "SDUIUtilities"
+        ),
+        
+        .macro(
+            name: "SDUIMacrosInternal",
+            dependencies: [
+                .product(name: "SwiftSyntaxMacros", package: "swift-syntax"),
+                .product(name: "SwiftCompilerPlugin", package: "swift-syntax"),
+                "SDUICore",
+            ]
+        ),
+        
+        .target(name: "SDUIMacros", dependencies: ["SDUIMacrosInternal"]),
+        
+        .target(
+            name: "SDUIWidgets",
+            dependencies: ["SDUICore", "SDUIUtilities", "SDUIMacros", "Yams"]
+        ),
+        
         .executableTarget(name: "SDUIKitClient",
-                          dependencies: ["SDUICore", "SDUIWidgets", "SDUIMacros"]),
+                          dependencies: ["SDUIKit"]),
     ]
 )
