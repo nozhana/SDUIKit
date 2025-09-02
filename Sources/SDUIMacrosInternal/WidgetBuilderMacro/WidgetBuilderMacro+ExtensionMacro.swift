@@ -49,7 +49,7 @@ extension WidgetBuilderMacro: ExtensionMacro {
             
             if let typeArg = functionCall.arguments.first(labeled: "type") {
                 if let type = typeArg.expression.as(StringLiteralExprSyntax.self)?.segments.first?.as(StringSegmentSyntax.self)?.content.text {
-                    typeAnnotation = "\(raw: typeName)"
+                    typeAnnotation = "\(raw: type)"
                 } else if let memberAccessExpr = typeArg.expression.as(MemberAccessExprSyntax.self) {
                     let baseExpr: ExprSyntax
                     if memberAccessExpr.declName.baseName.text == "self" {
