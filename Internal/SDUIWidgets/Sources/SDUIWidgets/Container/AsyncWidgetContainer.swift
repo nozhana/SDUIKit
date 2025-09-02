@@ -63,7 +63,7 @@ public struct AsyncWidgetContainer: View {
             widgetLoadable = .loading()
         }
         do {
-            let request = URLRequest(url: url, timeoutInterval: 20)
+            let request = URLRequest(url: url, cachePolicy: .reloadRevalidatingCacheData, timeoutInterval: 20)
             let (data, _) = try await URLSession.shared.data(for: request)
             await MainActor.run {
                 widgetLoadable = .loaded(value: data)

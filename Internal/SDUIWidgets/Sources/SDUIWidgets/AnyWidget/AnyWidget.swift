@@ -30,6 +30,7 @@ public struct AnyWidget: WidgetProtocol {
         ClipShapeWidget.self,
         BorderWidget.self,
         TabWidget.self,
+        TransitionWidget.self,
         ScaffoldWidget.self,
         FrameWidget.self,
         ImageWidget.self,
