@@ -8,7 +8,7 @@
 import SDUIMacros
 import SwiftUI
 
-@WidgetBuilder(args: .custom("foregroundColor", type: "ColorWidget"), .content)
+@WidgetBuilder(args: .custom("foregroundColor", type: ColorWidget.self), .content)
 public struct ForegroundColorWidget: View {
     public var body: some View {
         AnyWidgetView(data.content)

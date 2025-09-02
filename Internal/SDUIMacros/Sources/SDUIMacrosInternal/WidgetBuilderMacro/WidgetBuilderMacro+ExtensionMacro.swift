@@ -38,16 +38,27 @@ extension WidgetBuilderMacro: ExtensionMacro {
         let functionCalls = arguments.compactMap({ $0.expression.as(FunctionCallExprSyntax.self) })
         
         var (variables, initParams, initializerBlocks): ([VariableDeclSyntax], [FunctionParameterSyntax], [CodeBlockItemSyntax]) = try functionCalls.reduce(into: ([], [], [])) { partialResult, functionCall in
-            guard var typeName = functionCall.calledExpression.as(MemberAccessExprSyntax.self)?.declName.baseName.text,
+            guard let typeName = functionCall.calledExpression.as(MemberAccessExprSyntax.self)?.declName.baseName.text,
                   let variableName = functionCall.arguments.first?.expression
                 .as(StringLiteralExprSyntax.self)?
                 .segments.first?
                 .as(StringSegmentSyntax.self)?
                 .content.text else { return }
             
-            if let typeArg = functionCall.arguments.first(labeled: "type"),
-               let type = typeArg.expression.as(StringLiteralExprSyntax.self)?.segments.first?.as(StringSegmentSyntax.self)?.content.text {
-                typeName = type
+            var typeAnnotation: ExprSyntax = "\(raw: typeName)"
+            
+            if let typeArg = functionCall.arguments.first(labeled: "type") {
+                if let type = typeArg.expression.as(StringLiteralExprSyntax.self)?.segments.first?.as(StringSegmentSyntax.self)?.content.text {
+                    typeAnnotation = "\(raw: typeName)"
+                } else if let memberAccessExpr = typeArg.expression.as(MemberAccessExprSyntax.self) {
+                    let baseExpr: ExprSyntax
+                    if memberAccessExpr.declName.baseName.text == "self" {
+                        baseExpr = memberAccessExpr.base!
+                    } else {
+                        baseExpr = ExprSyntax(memberAccessExpr)
+                    }
+                    typeAnnotation = baseExpr
+                }
             }
             
             var optional = typeName.hasSuffix("?")
@@ -57,18 +68,18 @@ extension WidgetBuilderMacro: ExtensionMacro {
                 optional = true
             }
             
-            var typeAnnotation: String = switch typeName {
+            typeAnnotation = switch typeName {
             case "string": "String"
             case "stringArray": "[String]"
             case "integer": "Int"
             case "double": "Double"
             case "widget": "AnyWidget"
             case "widgets": "[AnyWidget]"
-            default: typeName
+            default: typeAnnotation
             }
             
             if optional, !typeName.hasSuffix("?") {
-                typeAnnotation += "?"
+                typeAnnotation = "\(typeAnnotation)?"
             }
             
             let variableDecl = try VariableDeclSyntax("\(acl) var \(raw: variableName): \(raw: typeAnnotation)")

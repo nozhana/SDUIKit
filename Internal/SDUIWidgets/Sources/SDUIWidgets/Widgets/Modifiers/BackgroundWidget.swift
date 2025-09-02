@@ -8,7 +8,7 @@
 import SDUIMacros
 import SwiftUI
 
-@WidgetBuilder(args: .widget("background"), .custom("alignment", type: "Alignment", optional: true), .content)
+@WidgetBuilder(args: .widget("background"), .custom("alignment", type: Alignment.self, optional: true), .content)
 public struct BackgroundWidget: View {
     public var body: some View {
         AnyWidgetView(data.content)

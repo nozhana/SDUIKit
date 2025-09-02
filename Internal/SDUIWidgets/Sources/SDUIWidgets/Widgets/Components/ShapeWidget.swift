@@ -8,7 +8,7 @@
 import SDUIMacros
 import SwiftUI
 
-@WidgetBuilder(args: .custom("shape", type: "Shape"), .custom("fill", type: "ColorWidget", optional: true))
+@WidgetBuilder(args: .custom("shape", type: Shape.self), .custom("fill", type: ColorWidget.self, optional: true))
 public struct ShapeWidget: View {
     public var body: some View {
         data.shape.systemShape

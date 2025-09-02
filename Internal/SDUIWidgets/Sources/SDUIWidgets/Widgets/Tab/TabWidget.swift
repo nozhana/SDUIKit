@@ -8,7 +8,7 @@
 import SDUIMacros
 import SwiftUI
 
-@WidgetBuilder(args: .custom("style", type: "Style", optional: true), .integer("initial", optional: true), .custom("tabs", type: "[TabItemWidget]"))
+@WidgetBuilder(args: .custom("style", type: TabStyle.self, optional: true), .integer("initial", optional: true), .custom("tabs", type: [TabItemWidget].self))
 public struct TabWidget: View {
     @State private var selection = 0
     @State private var isInitialized = false
@@ -43,7 +43,7 @@ public struct TabWidget: View {
     }
 }
 
-@WidgetBuilder(args: .custom("label", type: "LabelWidget"), .content)
+@WidgetBuilder(args: .custom("label", type: LabelWidget.self), .content)
 public struct TabItemWidget: View {
     public var body: some View {
         AnyWidgetView(data.content)
@@ -53,51 +53,50 @@ public struct TabItemWidget: View {
     }
 }
 
-extension TabWidget.Data {
-    public enum Style: Decodable, Sendable, RawRepresentable {
-        case automatic, sidebarAdaptable, tabBarOnly
-        case grouped
-        case page(indexDisplayMode: PageIndexDisplayMode = .automatic)
+
+public enum TabStyle: Decodable, Sendable, RawRepresentable {
+    case automatic, sidebarAdaptable, tabBarOnly
+    case grouped
+    case page(indexDisplayMode: PageIndexDisplayMode = .automatic)
+    
+    public enum PageIndexDisplayMode: String, CaseIterable, Decodable, Sendable {
+        case never, always, automatic
         
-        public enum PageIndexDisplayMode: String, CaseIterable, Decodable, Sendable {
-            case never, always, automatic
-            
 #if os(iOS)
-            public var systemIndexDisplayMode: PageTabViewStyle.IndexDisplayMode {
-                switch self {
-                case .never: .never
-                case .always: .always
-                case .automatic: .automatic
-                }
-            }
-#endif
-        }
-        
-        public init(rawValue: String) {
-            switch rawValue {
-            case "grouped": self = .grouped
-            case "sidebarAdaptable": self = .sidebarAdaptable
-            case "tabBarOnly": self = .tabBarOnly
-            default:
-                if let pageMatch = rawValue.wholeMatch(of: /page(?:-index:(.+))?/)?.output {
-                    let indexDisplayMode: PageIndexDisplayMode = pageMatch.1.map {
-                        PageIndexDisplayMode(rawValue: String($0)) ?? .automatic
-                    } ?? .automatic
-                    self = .page(indexDisplayMode: indexDisplayMode)
-                    return
-                }
-                self = .automatic
-            }
-        }
-        
-        public var rawValue: String {
+        public var systemIndexDisplayMode: PageTabViewStyle.IndexDisplayMode {
             switch self {
-            case .automatic: "automatic"
-            case .grouped: "grouped"
-            case .sidebarAdaptable: "sidebarAdaptable"
-            case .tabBarOnly: "tabBarOnly"
-            case .page(let mode): "page-index:\(mode.rawValue)"
+            case .never: .never
+            case .always: .always
+            case .automatic: .automatic
             }
+        }
+#endif
+    }
+    
+    public init(rawValue: String) {
+        switch rawValue {
+        case "grouped": self = .grouped
+        case "sidebarAdaptable": self = .sidebarAdaptable
+        case "tabBarOnly": self = .tabBarOnly
+        default:
+            if let pageMatch = rawValue.wholeMatch(of: /page(?:-index:(.+))?/)?.output {
+                let indexDisplayMode: PageIndexDisplayMode = pageMatch.1.map {
+                    PageIndexDisplayMode(rawValue: String($0)) ?? .automatic
+                } ?? .automatic
+                self = .page(indexDisplayMode: indexDisplayMode)
+                return
+            }
+            self = .automatic
+        }
+    }
+    
+    public var rawValue: String {
+        switch self {
+        case .automatic: "automatic"
+        case .grouped: "grouped"
+        case .sidebarAdaptable: "sidebarAdaptable"
+        case .tabBarOnly: "tabBarOnly"
+        case .page(let mode): "page-index:\(mode.rawValue)"
         }
     }
 }

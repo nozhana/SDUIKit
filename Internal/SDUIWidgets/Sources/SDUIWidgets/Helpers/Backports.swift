@@ -15,7 +15,7 @@ extension TabViewStyle where Self == DefaultTabViewStyle {
 
 extension Backport<DefaultTabViewStyle> {
     @MainActor
-    func page(indexDisplayMode: TabWidget.Data.Style.PageIndexDisplayMode = .automatic) -> some TabViewStyle {
+    func page(indexDisplayMode: TabStyle.PageIndexDisplayMode = .automatic) -> some TabViewStyle {
 #if os(macOS)
         .automatic
 #else

@@ -9,7 +9,7 @@ import SDUIUtilities
 import SDUIMacros
 import SwiftUI
 
-@WidgetBuilder(args: .custom("imageURL", type: "URL"), .double("ratio", optional: true), .custom("resizeMode", type: "ResizeMode", optional: true))
+@WidgetBuilder(args: .custom("imageURL", type: URL.self), .double("ratio", optional: true), .custom("resizeMode", type: ResizeMode.self, optional: true))
 public struct ImageWidget: View {
     public func platformImage(for url: URL) -> Image? {
 #if canImport(UIKit)

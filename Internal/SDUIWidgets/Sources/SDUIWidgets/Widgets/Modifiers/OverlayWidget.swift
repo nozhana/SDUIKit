@@ -8,7 +8,7 @@
 import SDUIMacros
 import SwiftUI
 
-@WidgetBuilder(args: .widget("overlay"), .custom("alignment", type: "Alignment", optional: true), .widget("content"))
+@WidgetBuilder(args: .widget("overlay"), .custom("alignment", type: Alignment.self, optional: true), .content)
 public struct OverlayWidget: View {
     public var body: some View {
         AnyWidgetView(data.content)

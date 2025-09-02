@@ -9,7 +9,7 @@ import SDUIMacros
 import SwiftUI
 import Yams
 
-@WidgetBuilder(args: .double("width", optional: true), .double("height", optional: true), .custom("alignment", type: "Alignment", optional: true), .content)
+@WidgetBuilder(args: .double("width", optional: true), .double("height", optional: true), .custom("alignment", type: Alignment.self, optional: true), .content)
 public struct FrameWidget: View {
     public var body: some View {
         AnyWidgetView(data.content)

@@ -8,7 +8,7 @@
 import SDUIMacros
 import SwiftUI
 
-@WidgetBuilder(args: .custom("deadline", type: "Date", optional: true), .custom("countdown", type: "Int", optional: true), .custom("properties", type: "Properties", optional: true))
+@WidgetBuilder(args: .custom("deadline", type: Date.self, optional: true), .custom("countdown", type: Int.self, optional: true), .custom("properties", type: TextWidget.Data.Properties.self, optional: true))
 public struct TimerWidget: View {
     private let now = Date.now
     public var body: some View {
@@ -36,7 +36,7 @@ public struct TimerWidget: View {
 }
 
 extension TimerWidget.Data {
-    public typealias Properties = TextWidget.Data.Properties
+    typealias Properties = TextWidget.Data.Properties
     
     public enum CodingKeys: String, CodingKey {
         case deadline, countdown, properties

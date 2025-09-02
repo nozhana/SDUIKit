@@ -12,7 +12,7 @@ public enum WidgetArgument: Sendable {
     case double(_ name: String, optional: Bool = false)
     case widget(_ name: String, optional: Bool = false)
     case widgets(_ name: String, optional: Bool = false)
-    case custom(_ name: String, type: String, optional: Bool = false)
+    case custom(_ name: String, type: (Decodable & Sendable).Type, optional: Bool = false)
     
     public static let content = widget("content")
     public static let items = widgets("items")
