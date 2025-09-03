@@ -25,6 +25,11 @@ extension ScrollableWidget {
     public struct Data: Codable, Sendable {
         public var axes: Axis.Set?
         public var content: AnyWidget
+        
+        public init(axes: Axis.Set? = nil, content: AnyWidget) {
+            self.axes = axes
+            self.content = content
+        }
     }
 }
 

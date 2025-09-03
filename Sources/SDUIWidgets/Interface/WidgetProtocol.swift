@@ -48,4 +48,22 @@ public extension WidgetProtocol {
         }
         try self.init(data)
     }
+    
+    var json: String {
+        get throws {
+            let data = try JSONEncoder().encode(self)
+            let object = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed)
+            let prettyData = try JSONSerialization.data(withJSONObject: object, options: [.fragmentsAllowed, .prettyPrinted])
+            guard let prettyString = String(data: prettyData, encoding: .utf8) else {
+                throw WidgetError.invalidUtf8String
+            }
+            return prettyString
+        }
+    }
+    
+    var yaml: String {
+        get throws {
+            try YAMLEncoder().encode(self)
+        }
+    }
 }

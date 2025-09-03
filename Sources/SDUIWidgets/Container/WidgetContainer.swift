@@ -18,6 +18,11 @@ public struct WidgetContainer: View {
         self.error = nil
     }
     
+    public init(@WidgetContentBuilder content: @escaping () -> AnyWidget) {
+        self.widget = content()
+        self.error = nil
+    }
+    
     public init(json: Data) {
         do {
             self.widget = try AnyWidget(json: json)

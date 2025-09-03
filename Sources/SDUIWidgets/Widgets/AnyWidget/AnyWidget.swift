@@ -64,19 +64,21 @@ public struct AnyWidget: WidgetProtocol {
         }
     }
     
+    public init(@WidgetContentBuilder content: @escaping () -> AnyWidget) {
+        self = content()
+    }
+    
+    public init(_ widgetEnum: WidgetEnum) {
+        self.init(widgetEnum.widget)
+    }
+    
     public func `as`<T>(_ widgetType: T.Type) -> T? where T: WidgetProtocol {
         widget as? T
     }
 }
 
-extension AnyWidget: ExpressibleByStringLiteral {
-    nonisolated public init(stringLiteral value: String) {
-        self.init(TextWidget(stringLiteral: value))
-    }
-}
-
-extension AnyWidget: ExpressibleByStringInterpolation {
-    nonisolated public init(stringInterpolation: DefaultStringInterpolation) {
-        self.init(TextWidget(stringInterpolation: stringInterpolation))
+public extension WidgetProtocol {
+    func eraseToAnyWidget() -> AnyWidget {
+        .init(self)
     }
 }

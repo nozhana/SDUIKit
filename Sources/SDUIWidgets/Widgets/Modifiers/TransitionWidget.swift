@@ -377,12 +377,6 @@ public enum Animation: Codable, Sendable {
     }
 }
 
-private extension Sequence {
-    func toDictionary<K, V>() -> Dictionary<K, V> where Element == (K, V), K: Hashable {
-        Dictionary(uniqueKeysWithValues: self)
-    }
-}
-
 #Preview {
     let yaml = """
 ---

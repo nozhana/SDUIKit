@@ -193,7 +193,7 @@ public enum ButtonAction: Codable, Sendable, RawRepresentable {
             let (title, message) = (args.first ?? "", args.dropFirst().first ?? "")
             let cancelTitle = args.dropFirst(2).first
             // ???: Support more actions?
-            let actions: [ShowAlertAction.ActionItem] = [(action: .none, label: "\(cancelTitle ?? "")")]
+            let actions: [ShowAlertAction.ActionItem] = [(action: .none, label: .init(TextWidget(data: .init(content: cancelTitle ?? ""))))]
             self = .showAlert(title: title, message: message, actions: actions)
         case "url":
             let urlString = String(match.2 ?? "")

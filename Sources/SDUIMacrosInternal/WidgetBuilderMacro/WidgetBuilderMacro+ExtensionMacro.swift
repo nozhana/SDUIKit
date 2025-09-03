@@ -87,7 +87,18 @@ extension WidgetBuilderMacro: ExtensionMacro {
             if optional {
                 parameterDecl.defaultValue = InitializerClauseSyntax(value: NilLiteralExprSyntax())
             }
-            let initializerBlock = CodeBlockItemSyntax("self.\(raw: variableName) = \(raw: variableName)")
+            let initializerBlock: CodeBlockItemSyntax
+            if ["widget", "widgets"].contains(typeName) {
+                parameterDecl.attributes = "@WidgetContentBuilder "
+                if typeName == "widgets" {
+                    parameterDecl.type = "@escaping () -> [AnyWidget]"
+                } else {
+                    parameterDecl.type = "@escaping () -> AnyWidget"
+                }
+                initializerBlock = CodeBlockItemSyntax("self.\(raw: variableName) = \(raw: variableName)()")
+            } else {
+                initializerBlock = CodeBlockItemSyntax("self.\(raw: variableName) = \(raw: variableName)")
+            }
             partialResult.0.append(variableDecl)
             partialResult.1.append(parameterDecl)
             partialResult.2.append(initializerBlock)
@@ -107,8 +118,8 @@ extension WidgetBuilderMacro: ExtensionMacro {
             }
             .forEach { (key, type) in
                 let variableDecl = try VariableDeclSyntax("\(acl) var \(raw: key): \(raw: type)")
-                let parameterDecl = FunctionParameterSyntax("\(raw: key): \(raw: type),")
-                let initializerBlock = CodeBlockItemSyntax("self.\(raw: key) = \(raw: key)")
+                let parameterDecl = FunctionParameterSyntax("@WidgetContentBuilder \(raw: key): @escaping () -> \(raw: type),")
+                let initializerBlock = CodeBlockItemSyntax("self.\(raw: key) = \(raw: key)()")
                 variables.append(variableDecl)
                 initParams.append(parameterDecl)
                 initializerBlocks.append(initializerBlock)
@@ -133,7 +144,33 @@ extension WidgetBuilderMacro: ExtensionMacro {
             initializerBlocks
         }
         
+        var shouldAddSimpleInit = false
+        var simpleBlocks = initializerBlocks
+        var simpleParams = initParams
+        
+        for index in 0..<initParams.count {
+            guard let functionType = initParams[index].type.as(AttributedTypeSyntax.self)?.baseType.as(FunctionTypeSyntax.self) else { continue }
+            shouldAddSimpleInit = true
+            let variableName = initParams[index].firstName.text
+            simpleParams[index] = "\(raw: variableName): \(functionType.returnClause.type),"
+            
+            simpleBlocks[index] = "self.\(raw: variableName) = \(raw: variableName)"
+        }
+        
+        if var lastParam = simpleParams.popLast() {
+            lastParam.trailingComma = nil
+            simpleParams.append(lastParam)
+        }
+        
+        let simpleSignature: FunctionSignatureSyntax = .init(parameterClause: .init(parameters: .init(simpleParams)))
+        var simpleInitDecl = dataInitDecl
+        simpleInitDecl.signature = simpleSignature
+        simpleInitDecl.body = .init(statements: .init(simpleBlocks))
+        
         dataDecl.memberBlock.members.append(MemberBlockItemSyntax(decl: dataInitDecl))
+        if shouldAddSimpleInit {
+            dataDecl.memberBlock.members.append(MemberBlockItemSyntax(decl: simpleInitDecl))
+        }
         
         extensionExpr.memberBlock.members.append(MemberBlockItemSyntax(decl: dataDecl))
         

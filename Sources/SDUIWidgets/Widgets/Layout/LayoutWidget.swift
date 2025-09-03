@@ -44,7 +44,7 @@ extension LayoutWidget {
         public var spacing: Double?
         public var items: [AnyWidget]
         
-        public init(layout: Layout, scroll: Axis.Set? = nil, alignment: Alignment? = nil, spacing: Double? = nil, items: [AnyWidget] = []) {
+        public init(layout: Layout, scroll: Axis.Set? = nil, alignment: Alignment? = nil, spacing: Double? = nil, items: [AnyWidget]) {
             self.layout = layout
             self.scroll = scroll
             self.alignment = alignment

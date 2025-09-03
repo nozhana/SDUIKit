@@ -14,3 +14,9 @@ public macro WidgetBuilder<Data>(of dataType: Data.Type) = #externalMacro(module
 @attached(extension, conformances: WidgetProtocol, names: arbitrary)
 @attached(member, names: named(data), named(init(data:)), named(init()))
 public macro WidgetBuilder(args: WidgetArgument...) = #externalMacro(module: "SDUIMacrosInternal", type: "WidgetBuilderMacro")
+
+@freestanding(expression)
+public macro registerWidgets(_: any WidgetProtocol.Type...) = #externalMacro(module: "SDUIMacrosInternal", type: "WidgetRegistryMacro")
+
+@freestanding(expression)
+public macro registerWidgets(_: [any WidgetProtocol.Type]) = #externalMacro(module: "SDUIMacrosInternal", type: "WidgetRegistryMacro")

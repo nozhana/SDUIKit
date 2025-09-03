@@ -50,4 +50,8 @@ extension ScaffoldDestinationWidget {
             self.content = content
         }
     }
+    
+    public init(title: String? = nil, inline: Bool? = nil, @WidgetContentBuilder toolbar: @escaping () -> [AnyWidget], @WidgetContentBuilder content: @escaping () -> AnyWidget) {
+        self.init(data: .init(title: title, inline: inline, toolbar: toolbar(), content: content()))
+    }
 }
