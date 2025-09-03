@@ -1,0 +1,15 @@
+@Tutorial(time: 10) {
+    @Intro(title: "Advanced usage of WidgetContentBuilder") {
+        Learn to use `WidgetContentBuilder` in detail, discovering all the nooks and crannies.
+    }
+    
+    @Section(title: "Usage") {
+        @ContentAndMedia {
+            
+        }
+        
+        @Steps {
+            
+        }
+    }
+}

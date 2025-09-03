@@ -1,0 +1,15 @@
+@Tutorial(time: 10) {
+    @Intro(title: "Build And Register Custom Widgets") {
+        Create a custom `WidgetProtocol` instance and register it in your app using a single-line macro.
+    }
+    
+    @Section(title: "Usage") {
+        @ContentAndMedia {
+            
+        }
+        
+        @Steps {
+            
+        }
+    }
+}

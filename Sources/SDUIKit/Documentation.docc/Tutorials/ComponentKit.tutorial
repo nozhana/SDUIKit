@@ -1,0 +1,15 @@
+@Tutorial(time: 10) {
+    @Intro(title: "Build a Custom Component Kit") {
+        Build a custom Component Kit based on `SDUIKit` to use in your server and client apps.
+    }
+    
+    @Section(title: "Usage") {
+        @ContentAndMedia {
+            
+        }
+        
+        @Steps {
+            
+        }
+    }
+}
