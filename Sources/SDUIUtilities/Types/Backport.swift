@@ -9,16 +9,16 @@ import Foundation
 
 @propertyWrapper
 @dynamicMemberLookup
-public struct Backport<T> {
-    public var wrappedValue: T
+package struct Backport<T> {
+    package var wrappedValue: T
     
-    public init(wrappedValue: T) {
+    package init(wrappedValue: T) {
         self.wrappedValue = wrappedValue
     }
     
-    public var projectedValue: Self { self }
+    package var projectedValue: Self { self }
     
-    public subscript<V>(dynamicMember keyPath: KeyPath<T, V>) -> Backport<V> {
+    package subscript<V>(dynamicMember keyPath: KeyPath<T, V>) -> Backport<V> {
         let v = wrappedValue[keyPath: keyPath]
         return Backport<V>(wrappedValue: v)
     }

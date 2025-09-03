@@ -7,14 +7,14 @@
 
 import Foundation
 
-public enum Loadable<T> {
+package enum Loadable<T> {
     case notLoaded
     case loading(progress: Double? = nil)
     case failed(Error? = nil)
     case loaded(value: T?)
 }
 
-public extension Loadable {
+package extension Loadable {
     var isLoaded: Bool {
         if case .loaded = self {
             return true

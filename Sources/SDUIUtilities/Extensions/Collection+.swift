@@ -7,7 +7,7 @@
 
 import Foundation
 
-public extension Collection {
+package extension Collection {
     subscript(safe index: Index) -> Element? {
         if indices.contains(index) {
             return self[index]

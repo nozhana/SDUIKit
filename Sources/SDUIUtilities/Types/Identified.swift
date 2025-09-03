@@ -7,18 +7,18 @@
 
 import Foundation
 
-public struct Identified<T, ID>: Identifiable where ID: Hashable {
-    public var id: ID
-    public var value: T
+package struct Identified<T, ID>: Identifiable where ID: Hashable {
+    package var id: ID
+    package var value: T
     
-    public init(id: ID, value: T) {
+    package init(id: ID, value: T) {
         self.id = id
         self.value = value
     }
 }
 
 extension Identified where ID == UUID {
-    public init(_ value: T) {
+    package init(_ value: T) {
         self.id = UUID()
         self.value = value
     }

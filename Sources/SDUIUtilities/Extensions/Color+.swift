@@ -9,17 +9,17 @@ import Foundation
 
 #if canImport(UIKit)
 import UIKit
-public typealias CoreColor = UIColor
+package typealias CoreColor = UIColor
 #endif
 
 #if os(macOS)
 import AppKit
-public typealias CoreColor = NSColor
+package typealias CoreColor = NSColor
 #endif
 
 import SwiftUI
 
-public extension CoreColor {
+package extension CoreColor {
     private convenience init(r: Int, g: Int, b: Int, alpha: CGFloat = 1) {
         assert((0...255) ~= r, "Invalid red component")
         assert((0...255) ~= g, "Invalid green component")
@@ -51,7 +51,7 @@ public extension CoreColor {
     }
 }
 
-public extension CoreColor {
+package extension CoreColor {
     static var primaryColor: CoreColor {
 #if canImport(UIKit)
         return label
@@ -61,7 +61,7 @@ public extension CoreColor {
     }
 }
 
-public extension Color {
+package extension Color {
     init(hex: Int, alpha: CGFloat = 1) {
 #if canImport(UIKit)
         self.init(uiColor: .init(hex: hex, alpha: alpha))

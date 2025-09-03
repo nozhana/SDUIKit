@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-public extension View {
+package extension View {
     @ViewBuilder
     func `if`(_ condition: Bool, @ViewBuilder content: @escaping (_ content: Self) -> some View) -> some View {
         if condition {
