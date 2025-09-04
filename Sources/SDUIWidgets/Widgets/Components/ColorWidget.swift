@@ -8,12 +8,14 @@
 import SDUIMacros
 import SwiftUI
 
+/// Represents a color using a provided hex code string.
 @WidgetBuilder(args: .string("color"))
 public struct ColorWidget: View {
     public var body: some View {
         systemColor
     }
     
+    /// Returns the SwiftUI Color associated with this widget.
     public var systemColor: Color {
         Color(hex: data.color)
     }

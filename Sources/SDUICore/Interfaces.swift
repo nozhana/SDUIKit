@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// The Protocol all "Widgets" conform to.
 public protocol WidgetProtocol: Codable, Sendable {
     associatedtype Data: Codable, Sendable
     var data: Data { get }

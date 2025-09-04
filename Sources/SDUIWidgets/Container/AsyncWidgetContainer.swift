@@ -8,9 +8,14 @@
 import SDUIUtilities
 import SwiftUI
 
+/// A SwiftUI adapter for a remotely-hosted widget.
+/// Refer to ``init(url:)``
 public struct AsyncWidgetContainer: View {
+    /// The remote URL of a widget.
     public var url: URL
     
+    /// Initialize an ``AsyncWidgetContainer`` using the URL of a remotely-hosted widget.
+    /// - Parameter url: The URL of the widget.
     public init(url: URL) {
         self.url = url
     }

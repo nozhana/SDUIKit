@@ -9,6 +9,9 @@ import SDUIUtilities
 import SDUIMacros
 import SwiftUI
 
+/// Represents a remotely-hosted widget.
+///
+/// Initialized with an `imageURL`, an optional `ratio`, and an optional `resizeMode`.
 @WidgetBuilder(args: .custom("imageURL", type: URL.self), .double("ratio", optional: true), .custom("resizeMode", type: ResizeMode.self, optional: true))
 public struct ImageWidget: View {
     public func platformImage(for url: URL) -> Image? {
@@ -64,6 +67,12 @@ public struct ImageWidget: View {
     }
 }
 
+/// Represents a resizing mode for scaling a widget, most likely an ``ImageWidget``.
+///
+/// Either ``fit`` or ``fill``.
+///
+/// - Note: Widgets usually accept an **optional** `ResizeMode` which usually yields three different behaviors.
+/// For instance, an ``SystemImageWidget`` is not scaled if not provided with a `ResizeMode`, neither is an ``ImageWidget``.
 public enum ResizeMode: String, CaseIterable, Codable, Sendable {
     case fit
     case fill
