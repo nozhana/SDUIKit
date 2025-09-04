@@ -3,6 +3,8 @@
         Display, create, and publish server-driven UI components based on pure SwiftUI.
         
         Learn to render and create `SDUIKit` widgets effortlessly.
+        
+        @Image(source: SDUIKit-banner, alt: "SDUIKit banner")
     }
     
     @Volume(name: "Getting Started") {
@@ -11,11 +13,15 @@
         @Chapter(name: "Client Implementation") {
             Use `SDUIKit` to display UI received from a backend server.
             
+            @Image(source: SDUIKit, alt: "SDUIKit logo")
+            
             @TutorialReference(tutorial: "doc:WidgetContainer")
         }
         
         @Chapter(name: "Server Implementation") {
             Use `SDUIKit` to build UI for clients on a Swift-based backend server.
+            
+            @Image(source: SDUIKit-inverse, alt: "SDUIKit square logo")
             
             @TutorialReference(tutorial: "doc:Vapor")
         }
@@ -24,8 +30,10 @@
     @Volume(name: "Going Further") {
         Discover all the nooks and crannies of `SDUIKit`.
         
-        @Chapter(name: "Usage") {
+        @Chapter(name: "Low-level APIs") {
             Learn to use all the utilities provided by `SDUIMacros` and `SDUIWidgets`.
+            
+            @Image(source: SDUIKit-outline, alt: "SDUIKit logo")
             
             @TutorialReference(tutorial: "doc:ContentBuilder")
             @TutorialReference(tutorial: "doc:WidgetBuilder")
@@ -34,6 +42,8 @@
         
         @Chapter(name: "Distribution") {
             Build a custom public or private component kit based on `SDUIKit`.
+            
+            @Image(source: SDUIKit-cube, alt: "SDUIKit cube logo")
             
             @TutorialReference(tutorial: "doc:ComponentKit")
         }
