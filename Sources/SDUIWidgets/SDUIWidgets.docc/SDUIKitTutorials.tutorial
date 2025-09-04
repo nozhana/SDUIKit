@@ -23,7 +23,7 @@
             
             @Image(source: SDUIKit, alt: "SDUIKit logo")
             
-            @TutorialReference(tutorial: "doc:WidgetContainer")
+            @TutorialReference(tutorial: "doc:tutorials/WidgetContainer")
         }
         
         @Chapter(name: "Server Implementation") {
