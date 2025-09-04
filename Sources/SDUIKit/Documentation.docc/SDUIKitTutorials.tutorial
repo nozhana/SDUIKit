@@ -10,6 +10,14 @@
     @Volume(name: "Getting Started") {
         Use our extensive library of prebuilt widgets to configure your client or server applications.
         
+        @Chapter(name: "Basics") {
+            Learn the basics of `SDUIKit` and how to use it.
+            
+            @Image(source: SDUIKit-code, alt: "SDUIKit logo encapsulated with curly braces")
+            
+            @TutorialReference(tutorial: "doc:Structure")
+        }
+        
         @Chapter(name: "Client Implementation") {
             Use `SDUIKit` to display UI received from a backend server.
             
