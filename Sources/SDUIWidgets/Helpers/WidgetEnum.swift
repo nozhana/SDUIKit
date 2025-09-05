@@ -19,8 +19,8 @@ public enum WidgetEnum {
     case shape(_ shape: Shape, fill: String? = nil)
     case timer(deadline: Date? = nil, countdown: Int? = nil, properties: TextWidget.Data.Properties? = nil)
     case padding(_ padding: Double, edges: Edges? = nil, content: AnyWidget)
-    case row(alignment: VerticalAlignment? = nil, spacing: Double? = nil, items: [AnyWidget])
-    case column(alignment: HorizontalAlignment? = nil, spacing: Double? = nil, items: [AnyWidget])
+    case row(scroll: Axis.Set? = nil, alignment: VerticalAlignment? = nil, spacing: Double? = nil, items: [AnyWidget])
+    case column(scroll: Axis.Set? = nil, alignment: HorizontalAlignment? = nil, spacing: Double? = nil, items: [AnyWidget])
     case stack(alignment: Alignment? = nil, items: [AnyWidget])
     case frame(width: Double? = nil, height: Double? = nil, alignment: Alignment? = nil, content: AnyWidget)
     case scaffold(_ title: String, inline: Bool? = nil, toolbar: [AnyWidget]? = nil, destinations: [String: ScaffoldDestinationWidget]? = nil, content: AnyWidget)
@@ -39,12 +39,12 @@ public enum WidgetEnum {
         .padding(padding, edges: edges, content: content())
     }
     
-    public static func row(alignment: VerticalAlignment? = nil, spacing: Double? = nil, @WidgetContentBuilder items: @escaping () -> [AnyWidget]) -> WidgetEnum {
-        .row(alignment: alignment, spacing: spacing, items: items())
+    public static func row(scroll: Axis.Set? = nil, alignment: VerticalAlignment? = nil, spacing: Double? = nil, @WidgetContentBuilder items: @escaping () -> [AnyWidget]) -> WidgetEnum {
+        .row(scroll: scroll, alignment: alignment, spacing: spacing, items: items())
     }
     
-    public static func column(alignment: HorizontalAlignment? = nil, spacing: Double? = nil, @WidgetContentBuilder items: @escaping () -> [AnyWidget]) -> WidgetEnum {
-        .column(alignment: alignment, spacing: spacing, items: items())
+    public static func column(scroll: Axis.Set? = nil, alignment: HorizontalAlignment? = nil, spacing: Double? = nil, @WidgetContentBuilder items: @escaping () -> [AnyWidget]) -> WidgetEnum {
+        .column(scroll: scroll, alignment: alignment, spacing: spacing, items: items())
     }
     
     public static func stack(alignment: Alignment? = nil, @WidgetContentBuilder items: @escaping () -> [AnyWidget]) -> WidgetEnum {
@@ -83,10 +83,10 @@ public enum WidgetEnum {
             TimerWidget(data: .init(deadline: deadline, countdown: countdown, properties: properties))
         case .padding(let padding, let edges, let content):
             PaddingWidget(data: .init(length: padding, edges: edges, content: content))
-        case .row(let alignment, let spacing, let items):
-            LayoutWidget(data: .init(layout: .horizontal, alignment: alignment?.generalAlignment, spacing: spacing, items: items))
-        case .column(let alignment, let spacing, let items):
-            LayoutWidget(data: .init(layout: .vertical, alignment: alignment?.generalAlignment, spacing: spacing, items: items))
+        case .row(let axes, let alignment, let spacing, let items):
+            LayoutWidget(data: .init(layout: .horizontal, scroll: axes, alignment: alignment?.generalAlignment, spacing: spacing, items: items))
+        case .column(let axes, let alignment, let spacing, let items):
+            LayoutWidget(data: .init(layout: .vertical, scroll: axes, alignment: alignment?.generalAlignment, spacing: spacing, items: items))
         case .stack(let alignment, let items):
             LayoutWidget(data: .init(layout: .perpendicular, alignment: alignment, items: items))
         case .frame(let width, let height, let alignment, let content):
