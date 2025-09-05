@@ -1,0 +1,15 @@
+@Tutorial(time: 10) {
+    @Intro(title: "Integrate SDUIKit with Vapor") {
+        Return conditional UI content based on dynamic data from a Vapor route.
+    }
+    
+    @Section(title: "Prepare your UI") {
+        @ContentAndMedia {
+            Prepare your UI upon a user request.
+        }
+        
+        @Steps {
+            
+        }
+    }
+}

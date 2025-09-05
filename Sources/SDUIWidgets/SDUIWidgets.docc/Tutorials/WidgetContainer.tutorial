@@ -1,0 +1,77 @@
+@Tutorial(time: 5) {
+    @Intro(title: "Display widgets using WidgetContainer") {
+        Use the `WidgetContainer` to display widgets.
+    }
+    
+    @Section(title: "Display a WidgetProtocol instance") {
+        @ContentAndMedia {
+            Provide the `WidgetContainer` with a `WidgetProtocol`.
+        }
+        
+        @Steps {
+            @Step {
+                Define any widget and initialize a `WidgetContainer` with it.
+                
+                @Code(name: "TestingWidgetContainer.swift", file: widgetcontainer-1-1.swift)
+            }
+        }
+    }
+        
+    @Section(title: "Display encoded data") {
+        @ContentAndMedia {
+            Provide the `WidgetContainer` with encoded JSON or YAML data.
+        }
+        
+        @Steps {
+            @Step {
+                Provide the `WidgetContainer` with a JSON string.
+                
+                @Code(name: "TestingWidgetContainer.swift", file: widgetcontainer-2-1.swift)
+            }
+            
+            @Step {
+                Provide the `WidgetContainer` with JSON data.
+                
+                @Code(name: "TestingWidgetContainer.swift", file: widgetcontainer-2-2.swift)
+            }
+            
+            @Step {
+                Provide the `WidgetContainer` with a YAML string.
+                
+                @Code(name: "TestingWidgetContainer.swift", file: widgetcontainer-2-3.swift)
+            }
+            
+            @Step {
+                Provide the `WidgetContainer` with YAML data.
+                
+                @Code(name: "TestingWidgetContainer.swift", file: widgetcontainer-2-4.swift)
+            }
+            
+            @Step {
+                Use the language-agnostic initializer with no argument label to initialize with JSON or YAML data.
+                
+                @Code(name: "TestingWidgetContainer.swift", file: widgetcontainer-2-5.swift)
+            }
+        }
+    }
+        
+    @Section(title: "Build a widget") {
+        @ContentAndMedia {
+            Display widgets built using `WidgetBuilder`, `WidgetContentBuilder` and `WidgetEnum`.
+        }
+        
+        @Steps {
+            @Step {
+                Use the `/` operator to convert a `WidgetEnum` to a `AnyWidget`.
+                
+                @Code(name: "TestingWidgetContainer.swift", file: widgetcontainer-3-1.swift)
+            }
+            
+            @Step {
+                Provide widget content using `WidgetContentBuilder` syntax.
+                
+                @Code(name: "TestingWidgetContainer.swift", file: widgetcontainer-3-2.swift)
+            }
+        }
+    }
+}

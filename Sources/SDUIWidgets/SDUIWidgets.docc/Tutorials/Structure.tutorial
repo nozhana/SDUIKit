@@ -1,0 +1,15 @@
+@Article(time: 4) {
+    @Intro(title: "Structure of SDUIKit") {
+        This article comprises the explanation for the structure of SDUIKit. 
+        
+        @Image(source: SDUIKit-banner, alt: "SDUIKit logo")
+    }
+    
+    @Stack {
+        @ContentAndMedia {
+            What exactly is a `Widget`?
+            
+            A Widget is any symbol, preferably a `struct`, conforming to `WidgetProtocol`.
+        }
+    }
+}

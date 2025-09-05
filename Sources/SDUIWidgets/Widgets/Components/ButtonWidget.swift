@@ -9,6 +9,9 @@ import SDUIUtilities
 import SDUIMacros
 import SwiftUI
 
+/// A Button widget.
+///
+/// Initialized with a ``ButtonAction``, an optional ``ButtonStyle``, and a label of type ``AnyWidget``.
 @WidgetBuilder(args: .custom("action", type: ButtonAction.self), .custom("style", type: ButtonStyle.self, optional: true), .widget("label"))
 public struct ButtonWidget: View {
     @Environment(\.setPath) private var setPath
