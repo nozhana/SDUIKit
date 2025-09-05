@@ -45,7 +45,7 @@ extension TimerWidget.Data {
     public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         let deadlineISO8601 = deadline?.formatted(.iso8601)
-        try container.encodeIfPresent(deadline, forKey: .deadline)
+        try container.encodeIfPresent(deadlineISO8601, forKey: .deadline)
         try container.encodeIfPresent(countdown, forKey: .countdown)
         try container.encodeIfPresent(properties, forKey: .properties)
     }
