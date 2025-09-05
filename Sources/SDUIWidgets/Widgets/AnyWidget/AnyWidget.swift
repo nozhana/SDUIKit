@@ -19,6 +19,8 @@ public struct AnyWidget: WidgetProtocol {
     
     // !!!: Order-sensitive!
     static let supportedWidgetTypes: [any WidgetProtocol.Type] = [
+        StatefulWidget.self,
+        ToggleWidget.self,
         LabelWidget.self,
         ForegroundColorWidget.self,
         ColorWidget.self,
