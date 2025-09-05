@@ -9,13 +9,18 @@ import SDUICore
 import SwiftUI
 import Yams
 
+/// A Shorthand type annotation for a widget that is also a view.
 public typealias WidgetView = WidgetProtocol & View
 
 public extension WidgetProtocol {
+    /// Initialize the widget with JSON encoded data.
+    /// - Parameter json: JSON data.
     init(json: Foundation.Data) throws {
         self = try JSONDecoder().decode(Self.self, from: json)
     }
     
+    /// Initialize the widget with a JSON encoded string.
+    /// - Parameter json: A JSON string.
     init(json: String) throws {
         guard let data = json.data(using: .utf8) else {
             throw WidgetError.invalidUtf8String
@@ -23,10 +28,14 @@ public extension WidgetProtocol {
         try self.init(json: data)
     }
     
+    /// Initialize the widget with YAML encoded data.
+    /// - Parameter yaml: YAML  data.
     init(yaml: Foundation.Data) throws {
         self = try YAMLDecoder().decode(Self.self, from: yaml)
     }
     
+    /// Initialize the widget with a YAML encoded string.
+    /// - Parameter yaml: A YAML string.
     init(yaml: String) throws {
         guard let data = yaml.data(using: .utf8) else {
             throw WidgetError.invalidUtf8String
@@ -34,6 +43,8 @@ public extension WidgetProtocol {
         try self.init(yaml: data)
     }
     
+    /// Initialize the widget with either JSON or YAML encoded data.
+    /// - Parameter data: JSON or YAML  data.
     init(_ data: Foundation.Data) throws {
         if let widget = try? YAMLDecoder().decode(Self.self, from: data) {
             self = widget
@@ -42,6 +53,8 @@ public extension WidgetProtocol {
         }
     }
     
+    /// Initialize the widget with a JSON or YAML encoded string.
+    /// - Parameter string: A JSON or YAML string.
     init(_ string: String) throws {
         guard let data = string.data(using: .utf8) else {
             throw WidgetError.invalidUtf8String

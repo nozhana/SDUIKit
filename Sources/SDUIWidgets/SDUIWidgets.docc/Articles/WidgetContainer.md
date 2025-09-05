@@ -1,5 +1,14 @@
 # ``SDUIWidgets/WidgetContainer``
 
-A preview container for a local widget, with error handling.
+### Implementation
 
-## Overview
+```swift
+#Preview {
+    let yaml = """
+---
+content: Hello, world!-34-bold
+"""
+    
+    WidgetContainer(yaml)
+}
+```

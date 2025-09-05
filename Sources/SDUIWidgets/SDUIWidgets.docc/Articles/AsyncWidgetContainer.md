@@ -1,5 +1,11 @@
 # ``SDUIWidgets/AsyncWidgetContainer``
 
-A container for a widget hosted on a remote source.
+### Implementation
 
-## Overview
+```swift
+#Preview {
+    let url = URL(string: "https://acme.co/remote/widget/path")!
+    
+    AsyncWidgetContainer(url: url)
+}
+```

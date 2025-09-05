@@ -8,6 +8,13 @@
 import Foundation
 import SDUICore
 
+/// A helper function wrapper to create a widget tree.
+///
+/// This `resultBuilder` can create a single ``AnyWidget`` or an array of ``AnyWidget`` instances
+/// from a buildable expression of any ``SDUICore/WidgetProtocol`` instance.
+///
+/// - Tip: Initializers for ``/SDUICore/WidgetProtocol/Data`` using `WidgetContentBuilder` arguments will be generated
+/// for you automatically when using the `WidgetBuilder` macro.
 @resultBuilder
 public struct WidgetContentBuilder {
     public static func buildExpression(_ expression: any WidgetProtocol) -> AnyWidget {

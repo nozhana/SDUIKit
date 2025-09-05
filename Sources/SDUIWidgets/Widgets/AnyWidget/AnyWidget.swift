@@ -7,6 +7,7 @@
 
 import SDUICore
 
+/// A type-erased widget.
 public struct AnyWidget: WidgetProtocol {
     public typealias Data = Never
     public var data: Never { fatalError("AnyWidget.data should not be accessed directly.") }
@@ -58,6 +59,14 @@ public struct AnyWidget: WidgetProtocol {
         throw WidgetError.unsupportedWidgetType
     }
     
+    /// Erase a widget's type by converting it to an ``AnyWidget``.
+    /// - Parameter widget: Any widget.
+    ///
+    /// ```swift
+    /// let myWidget = MyWidget(data: .init(foo: "bar"))
+    ///
+    /// let anyWidget = AnyWidget(myWidget)
+    /// ```
     public init(_ widget: any WidgetProtocol) {
         if let anyWidget = widget as? AnyWidget {
             self = anyWidget
@@ -66,20 +75,39 @@ public struct AnyWidget: WidgetProtocol {
         }
     }
     
+    /// Initialize an ``AnyWidget`` using a ``WidgetContentBuilder``.
+    /// - Parameter content: A ``WidgetContentBuilder`` function generating a single widget.
     public init(@WidgetContentBuilder content: @escaping () -> AnyWidget) {
         self = content()
     }
     
+    /// Initialize an ``AnyWidget`` using a ``WidgetEnum``.
+    /// - Parameter widgetEnum: A widget enum.
     public init(_ widgetEnum: WidgetEnum) {
         self.init(widgetEnum.widget)
     }
     
+    /// Cast the inner widget type to a given widget type conditionally.
+    /// - Parameter widgetType: The widget type to cast the inner widget as.
+    /// - Returns: The resulting widget, if the inner widget can be successfully cast as the given type.
+    ///
+    /// ```swift
+    /// let myWidget = MyWidget(data: .init(foo: "bar"))
+    /// let anyWidget = AnyWidget(myWidget)
+    /// let castWidget = anyWidget.as(MyWidget.self)!
+    ///
+    /// // myWidget == castWidget
+    /// ```
     public func `as`<T>(_ widgetType: T.Type) -> T? where T: WidgetProtocol {
         widget as? T
     }
 }
 
 public extension WidgetProtocol {
+    /// Erase this widget to an ``AnyWidget`` type.
+    /// - Returns: The erased ``AnyWidget``.
+    ///
+    /// Refer to: ``AnyWidget/init(_:)-(WidgetProtocol)``
     func eraseToAnyWidget() -> AnyWidget {
         .init(self)
     }

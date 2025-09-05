@@ -8,6 +8,7 @@
 import Foundation
 import SDUICore
 
+/// A helper to represent a widget instance in a ``WidgetContentBuilder`` tree.
 public enum WidgetEnum {
     case text(_ content: String, properties: TextWidget.Data.Properties? = nil)
     case image(_ url: URL, ratio: Double? = nil, resizeMode: ResizeMode? = nil)
