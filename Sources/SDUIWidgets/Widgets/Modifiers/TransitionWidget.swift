@@ -8,35 +8,108 @@
 import SDUIMacros
 import SwiftUI
 
-@WidgetBuilder(args: .custom("transition", type: Transition.self), .custom("animation", type: Animation.self, optional: true), .content)
+@WidgetBuilder(args: .custom("transition", type: Transition.self), .custom("animation", type: Animation.self, optional: true), .string("stateKey", optional: true), .content)
 public struct TransitionWidget: View {
-    @State private var show = false
+    @WidgetState private var state
     
     public var body: some View {
+        let show = data.stateKey.map { state[$0] as? Bool ?? false } ?? true
         VStack {
             if show {
                 AnyWidgetView(data.content)
                     .transition(data.transition.systemTransition)
             }
         }
-        .animation(data.animation?.systemAnimation ?? .default.delay(0.2), value: show)
-        .onAppear {
-            show = true
-        }
+        .animation(data.animation?.systemAnimation ?? .default, value: show)
+    }
+}
+
+extension TransitionWidget.Data {
+    public enum CodingKeys: String, CodingKey {
+        case transition, animation, content
+        case stateKey = "if"
     }
 }
 
 public enum Transition: Codable, Sendable {
     case `default`
     case fade
+    case scale(downTo: Double = .zero, anchor: Anchor = .center)
     case blurReplace
     case move(edge: Edge)
     case offset(x: Double = .zero, y: Double = .zero)
     indirect case combined(Transition, Transition)
     
+    public static let scale = scale()
+    
     public func combined(with transition: Transition) -> Transition {
         .combined(self, transition)
     }
+}
+
+public struct Anchor: Codable, Sendable, Equatable, CustomStringConvertible {
+    public var x: Double
+    public var y: Double
+    
+    public init(x: Double = 0.5, y: Double = 0.5) {
+        self.x = x
+        self.y = y
+    }
+    
+    public init(unitPoint: UnitPoint) {
+        self.x = unitPoint.x
+        self.y = unitPoint.y
+    }
+    
+    fileprivate init(key: String) throws {
+        switch key {
+        case "top": self = .top
+        case "leading": self = .leading
+        case "bottom": self = .bottom
+        case "trailing": self = .trailing
+        case "topLeading": self = .topLeading
+        case "topTrailing": self = .topTrailing
+        case "bottomLeading": self = .bottomLeading
+        case "bottomTrailing": self = .bottomTrailing
+        case "center": self = .center
+        default:
+            if let match = key.wholeMatch(of: /x:(?'x'[\d.-]+),y:(?'y'[\d.-]+)/)?.output,
+               let x = Double(match.x), let y = Double(match.y) {
+                self = .init(x: x, y: y)
+            } else {
+                throw WidgetError.unknownDataType(key)
+            }
+        }
+    }
+    
+    public var description: String {
+        switch self {
+        case .top: "self"
+        case .leading: "leading"
+        case .bottom: "bottom"
+        case .trailing: "trailing"
+        case .topLeading: "topLeading"
+        case .topTrailing: "topTrailing"
+        case .bottomLeading: "bottomLeading"
+        case .bottomTrailing: "bottomTrailing"
+        case .center: "center"
+        default: "x:\(x),y:\(y)"
+        }
+    }
+    
+    public var unitPoint: UnitPoint {
+        .init(x: x, y: y)
+    }
+    
+    public static let top = Anchor(unitPoint: .top)
+    public static let leading = Anchor(unitPoint: .leading)
+    public static let bottom = Anchor(unitPoint: .bottom)
+    public static let trailing = Anchor(unitPoint: .trailing)
+    public static let topLeading = Anchor(unitPoint: .topLeading)
+    public static let topTrailing = Anchor(unitPoint: .topTrailing)
+    public static let bottomLeading = Anchor(unitPoint: .bottomLeading)
+    public static let bottomTrailing = Anchor(unitPoint: .bottomTrailing)
+    public static let center = Anchor(unitPoint: .center)
 }
 
 extension Transition: RawRepresentable {
@@ -45,6 +118,7 @@ extension Transition: RawRepresentable {
         switch self {
         case .default: .identity
         case .fade: .opacity
+        case .scale(let scale, let anchor): .scale(scale: scale, anchor: anchor.unitPoint)
         case .blurReplace: .init(.blurReplace)
         case .move(let edge): .move(edge: edge.systemEdge)
         case .offset(let x, let y): .offset(x: x, y: y)
@@ -54,7 +128,7 @@ extension Transition: RawRepresentable {
     }
     
     public init?(rawValue stringKey: String) {
-        let matches = stringKey.matches(of: /(fade|blur|move|offset)(?:-([^|]+))?/)
+        let matches = stringKey.matches(of: /(fade|scale|blur|move|offset)(?:-([^|]+))?/)
         guard !matches.isEmpty else {
             return nil
         }
@@ -74,6 +148,8 @@ extension Transition: RawRepresentable {
             "default"
         case .fade:
             "fade"
+        case .scale(let scale, let anchor):
+            "scale-\(scale)-\(anchor)"
         case .blurReplace:
             "blur"
         case .move(let edge):
@@ -105,6 +181,14 @@ extension Transition: RawRepresentable {
             self = .default
         case "fade":
             self = .fade
+        case "scale":
+            guard let arguments = output.argument?.split(separator: "-") else {
+                self = .scale
+                return
+            }
+            let scale = arguments.compactMap { Double($0) }.first ?? .zero
+            let anchor = arguments.compactMap { try? Anchor(key: String($0)) }.first ?? .center
+            self = .scale(downTo: scale, anchor: anchor)
         case "blur":
             self = .blurReplace
         case "move":

@@ -24,6 +24,22 @@ extension Backport<DefaultTabViewStyle> {
     }
 }
 
+// MARK: - Toggle Style Backports
+extension SwiftUI.ToggleStyle where Self == DefaultToggleStyle {
+    static var backport: Backport<Self> { .init(wrappedValue: .automatic) }
+}
+
+extension Backport where T: SwiftUI.ToggleStyle {
+    @MainActor
+    var checkbox: some SwiftUI.ToggleStyle {
+#if os(macOS)
+        .checkbox
+#else
+        .automatic
+#endif
+    }
+}
+
 // MARK: - View Backports
 extension View {
     var backport: Backport<Self> { .init(wrappedValue: self) }

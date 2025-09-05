@@ -7,6 +7,7 @@
 
 /// Represents an entry in a widget's ``WidgetProtocol/data-swift.property``.
 public enum WidgetArgument: Sendable {
+    case boolean(_ name: String, optional: Bool = false)
     case string(_ name: String, optional: Bool = false)
     case stringArray(_ name: String, optional: Bool = false)
     case integer(_ name: String, optional: Bool = false)

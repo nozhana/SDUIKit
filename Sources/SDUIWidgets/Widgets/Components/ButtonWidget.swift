@@ -21,6 +21,8 @@ public struct ButtonWidget: View {
     
     @Environment(\.openURL) private var openURL
     
+    @WidgetState private var state
+    
     public var body: some View {
         Button {
             switch data.action {
@@ -34,6 +36,8 @@ public struct ButtonWidget: View {
                 showAlert(title, message: message, actions: actions)
             case .openURL(let url):
                 openURL(url)
+            case .setState(let key, let value):
+                state[key] = value.value
             case .none:
                 break
             }
@@ -72,6 +76,7 @@ public enum ButtonAction: Codable, Sendable, RawRepresentable {
     case popPath
     case showAlert(title: String, message: String, actions: [(action: ButtonAction, label: AnyWidget)])
     case openURL(url: URL)
+    case setState(key: String, value: StateValue)
     case none
     
     public enum CodingKeys: String, CodingKey {
@@ -80,7 +85,7 @@ public enum ButtonAction: Codable, Sendable, RawRepresentable {
     }
     
     private enum ArgumentsCodingKeys: String, CodingKey {
-        case elements, element, title, message, actions, url
+        case elements, element, title, message, actions, url, key, value
     }
     
     private struct AlertAction: Codable, Sendable {
@@ -112,6 +117,11 @@ public enum ButtonAction: Codable, Sendable, RawRepresentable {
             var argsContainer = container.nestedContainer(keyedBy: ArgumentsCodingKeys.self, forKey: .arguments)
             try container.encode("url", forKey: .action)
             try argsContainer.encode(url, forKey: .url)
+        case .setState(let key, let value):
+            var argsContainer = container.nestedContainer(keyedBy: ArgumentsCodingKeys.self, forKey: .arguments)
+            try container.encode("state", forKey: .action)
+            try argsContainer.encode(key, forKey: .key)
+            try argsContainer.encode(value, forKey: .value)
         case .none:
             try container.encode("none", forKey: .action)
         }
@@ -170,6 +180,10 @@ public enum ButtonAction: Codable, Sendable, RawRepresentable {
         case "url":
             let url = try argsContainer.decode(URL.self, forKey: .url)
             self = .openURL(url: url)
+        case "state":
+            let key = try argsContainer.decode(String.self, forKey: .key)
+            let value = try argsContainer.decode(StateValue.self, forKey: .value)
+            self = .setState(key: key, value: value)
         case "none":
             self = .none
         default:
@@ -178,7 +192,7 @@ public enum ButtonAction: Codable, Sendable, RawRepresentable {
     }
     
     public init?(rawValue: String) {
-        guard let match = rawValue.wholeMatch(of: /(set|push|pop|alert|url|none)(?:-((?:.|\n)+))?/)?.output else {
+        guard let match = rawValue.wholeMatch(of: /(set|push|pop|alert|url|state|none)(?:-((?:.|\n)+))?/)?.output else {
             return nil
         }
         
@@ -204,6 +218,12 @@ public enum ButtonAction: Codable, Sendable, RawRepresentable {
                 return nil
             }
             self = .openURL(url: url)
+        case "state":
+            let keyValue = String(match.2 ?? "").split(separator: ":").map(String.init)
+            guard let key = keyValue.first,
+                  let valueString = keyValue[safe: 1],
+                  let value = try? StateValue(stringValue: valueString) else { return nil }
+            self = .setState(key: key, value: value)
         case "none":
             self = .none
         default:
@@ -227,6 +247,8 @@ public enum ButtonAction: Codable, Sendable, RawRepresentable {
             return key
         case .openURL(let url):
             return "url-\(url.absoluteString)"
+        case .setState(let key, let value):
+            return "state-\(key):\(value.value)"
         case .none:
             return "none"
         }
