@@ -9,13 +9,20 @@ import SDUIUtilities
 import SwiftUI
 
 /// A SwiftUI adapter for a remotely-hosted widget.
-/// Refer to ``init(url:)``
+///
+/// - Warning: The container will display an error message upon request failure or invalid data.
 public struct AsyncWidgetContainer: View {
     /// The remote URL of a widget.
     public var url: URL
     
     /// Initialize an ``AsyncWidgetContainer`` using the URL of a remotely-hosted widget.
     /// - Parameter url: The URL of the widget.
+    ///
+    /// The container fetches the widget data upon appearance from the provided URL
+    /// while displaying a progress view when loading,
+    /// and will render the widget upon success.
+    ///
+    /// The container will also display an error message if the widget data is invalid or the request fails.
     public init(url: URL) {
         self.url = url
     }

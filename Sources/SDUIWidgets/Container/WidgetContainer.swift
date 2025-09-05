@@ -10,6 +10,8 @@ import SwiftUI
 import Yams
 
 /// The main SwiftUI adapter for ``SDUICore/WidgetProtocol``.
+///
+/// - Warning: The container will display an error message if the widget data provided is invalid.
 public struct WidgetContainer: View {
     private let widget: AnyWidget?
     private let error: Error?

@@ -7,11 +7,15 @@
 
 import Foundation
 
+/// An error representing a fault in widget parsing.
 public enum WidgetError: LocalizedError, CustomStringConvertible {
     case invalidUtf8String
+    /// Thrown when the provided string key is unrecognized.
     case unknownDataType(String)
+    /// Thrown when the object provided cannot be decoded into any known or registered widgets.
     case unsupportedWidgetType
     
+    /// The error description.
     public var description: String {
         switch self {
         case .invalidUtf8String: "Invalid UTF-8 string."
@@ -20,5 +24,8 @@ public enum WidgetError: LocalizedError, CustomStringConvertible {
         }
     }
     
+    /// Same as ``description``.
+    ///
+    /// Declared for conformance to `LocalizedError`.
     public var errorDescription: String? { description }
 }
