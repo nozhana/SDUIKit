@@ -69,6 +69,7 @@ extension WidgetBuilderMacro: ExtensionMacro {
             }
             
             typeAnnotation = switch typeName {
+            case "boolean": "Bool"
             case "string": "String"
             case "stringArray": "[String]"
             case "integer": "Int"
