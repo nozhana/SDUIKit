@@ -40,6 +40,31 @@ extension Backport where T: SwiftUI.ToggleStyle {
     }
 }
 
+// MARK: - Picker Style Backports
+extension SwiftUI.PickerStyle where Self == DefaultPickerStyle {
+    static var backport: Backport<Self> { .init(wrappedValue: .automatic) }
+}
+
+extension Backport where T: SwiftUI.PickerStyle {
+    @MainActor
+    var wheel: some SwiftUI.PickerStyle {
+#if os(iOS)
+        .wheel
+#else
+        .automatic
+#endif
+    }
+    
+    @MainActor
+    var radioGroup: some SwiftUI.PickerStyle {
+#if os(macOS)
+        .radioGroup
+#else
+        .automatic
+#endif
+    }
+}
+
 // MARK: - View Backports
 extension View {
     var backport: Backport<Self> { .init(wrappedValue: self) }

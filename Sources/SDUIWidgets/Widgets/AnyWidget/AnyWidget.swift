@@ -38,6 +38,7 @@ public struct AnyWidget: WidgetProtocol {
         FrameWidget.self,
         ImageWidget.self,
         TextWidget.self,
+        PickerWidget.self,
         LayoutWidget.self,
         ListSectionWidget.self,
         TimerWidget.self,

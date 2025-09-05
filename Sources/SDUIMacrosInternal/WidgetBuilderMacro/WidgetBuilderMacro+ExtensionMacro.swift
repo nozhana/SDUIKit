@@ -90,13 +90,21 @@ extension WidgetBuilderMacro: ExtensionMacro {
             }
             let initializerBlock: CodeBlockItemSyntax
             if ["widget", "widgets"].contains(typeName) {
-                parameterDecl.attributes = "@WidgetContentBuilder "
-                if typeName == "widgets" {
-                    parameterDecl.type = "@escaping () -> [AnyWidget]"
-                } else {
-                    parameterDecl.type = "@escaping () -> AnyWidget"
+                if !optional {
+                    parameterDecl.attributes = "@WidgetContentBuilder "
                 }
-                initializerBlock = CodeBlockItemSyntax("self.\(raw: variableName) = \(raw: variableName)()")
+                if typeName == "widgets" {
+                    parameterDecl.type = "() -> [AnyWidget]"
+                } else {
+                    parameterDecl.type = "() -> AnyWidget"
+                }
+                if optional {
+                    parameterDecl.type = "(\(parameterDecl.type))?"
+                    initializerBlock = CodeBlockItemSyntax("self.\(raw: variableName) = \(raw: variableName)?()")
+                } else {
+                    parameterDecl.type = "@escaping \(parameterDecl.type)"
+                    initializerBlock = CodeBlockItemSyntax("self.\(raw: variableName) = \(raw: variableName)()")
+                }
             } else {
                 initializerBlock = CodeBlockItemSyntax("self.\(raw: variableName) = \(raw: variableName)")
             }
@@ -150,10 +158,22 @@ extension WidgetBuilderMacro: ExtensionMacro {
         var simpleParams = initParams
         
         for index in 0..<initParams.count {
-            guard let functionType = initParams[index].type.as(AttributedTypeSyntax.self)?.baseType.as(FunctionTypeSyntax.self) else { continue }
+            guard let functionType = initParams[index].type
+                .as(AttributedTypeSyntax.self)?.baseType
+                .as(FunctionTypeSyntax.self)
+                    ?? initParams[index].type
+                .as(OptionalTypeSyntax.self)?.wrappedType
+                .as(TupleTypeSyntax.self)?.elements.first?.type
+                .as(FunctionTypeSyntax.self) else { continue }
+            
             shouldAddSimpleInit = true
             let variableName = initParams[index].firstName.text
-            simpleParams[index] = "\(raw: variableName): \(functionType.returnClause.type),"
+            let optional = initParams[index].type.is(OptionalTypeSyntax.self)
+            if optional {
+                simpleParams[index] = "\(raw: variableName): \(functionType.returnClause.type)?,"
+            } else {
+                simpleParams[index] = "\(raw: variableName): \(functionType.returnClause.type),"                
+            }
             
             simpleBlocks[index] = "self.\(raw: variableName) = \(raw: variableName)"
         }

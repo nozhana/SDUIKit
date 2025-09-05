@@ -14,13 +14,14 @@ public enum WidgetEnum {
     case image(_ url: URL, ratio: Double? = nil, resizeMode: ResizeMode? = nil)
     case icon(_ name: String, resizeMode: ResizeMode? = nil)
     case button(action: ButtonAction, style: ButtonStyle? = nil, label: AnyWidget)
+    case toggle(key: String, style: ToggleStyle? = nil, label: AnyWidget)
     case color(_ hex: String)
     case label(title: AnyWidget, icon: AnyWidget)
     case shape(_ shape: Shape, fill: String? = nil)
     case timer(deadline: Date? = nil, countdown: Int? = nil, properties: TextWidget.Data.Properties? = nil)
     case padding(_ padding: Double, edges: Edges? = nil, content: AnyWidget)
-    case row(alignment: VerticalAlignment? = nil, spacing: Double? = nil, items: [AnyWidget])
-    case column(alignment: HorizontalAlignment? = nil, spacing: Double? = nil, items: [AnyWidget])
+    case row(scroll: Axis.Set? = nil, alignment: VerticalAlignment? = nil, spacing: Double? = nil, items: [AnyWidget])
+    case column(scroll: Axis.Set? = nil, alignment: HorizontalAlignment? = nil, spacing: Double? = nil, items: [AnyWidget])
     case stack(alignment: Alignment? = nil, items: [AnyWidget])
     case frame(width: Double? = nil, height: Double? = nil, alignment: Alignment? = nil, content: AnyWidget)
     case scaffold(_ title: String, inline: Bool? = nil, toolbar: [AnyWidget]? = nil, destinations: [String: ScaffoldDestinationWidget]? = nil, content: AnyWidget)
@@ -31,6 +32,10 @@ public enum WidgetEnum {
         .button(action: action, style: style, label: label())
     }
     
+    public static func toggle(key: String, style: ToggleStyle? = nil, label: @escaping () -> AnyWidget) -> WidgetEnum {
+        .toggle(key: key, style: style, label: label())
+    }
+    
     public static func label(@WidgetContentBuilder title: @escaping () -> AnyWidget, @WidgetContentBuilder icon: @escaping () -> AnyWidget) -> WidgetEnum {
         .label(title: title(), icon: icon())
     }
@@ -39,12 +44,12 @@ public enum WidgetEnum {
         .padding(padding, edges: edges, content: content())
     }
     
-    public static func row(alignment: VerticalAlignment? = nil, spacing: Double? = nil, @WidgetContentBuilder items: @escaping () -> [AnyWidget]) -> WidgetEnum {
-        .row(alignment: alignment, spacing: spacing, items: items())
+    public static func row(scroll: Axis.Set? = nil, alignment: VerticalAlignment? = nil, spacing: Double? = nil, @WidgetContentBuilder items: @escaping () -> [AnyWidget]) -> WidgetEnum {
+        .row(scroll: scroll, alignment: alignment, spacing: spacing, items: items())
     }
     
-    public static func column(alignment: HorizontalAlignment? = nil, spacing: Double? = nil, @WidgetContentBuilder items: @escaping () -> [AnyWidget]) -> WidgetEnum {
-        .column(alignment: alignment, spacing: spacing, items: items())
+    public static func column(scroll: Axis.Set? = nil, alignment: HorizontalAlignment? = nil, spacing: Double? = nil, @WidgetContentBuilder items: @escaping () -> [AnyWidget]) -> WidgetEnum {
+        .column(scroll: scroll, alignment: alignment, spacing: spacing, items: items())
     }
     
     public static func stack(alignment: Alignment? = nil, @WidgetContentBuilder items: @escaping () -> [AnyWidget]) -> WidgetEnum {
@@ -73,6 +78,8 @@ public enum WidgetEnum {
             SystemImageWidget(data: .init(name: name, resizeMode: resizeMode))
         case .button(let action, let style, let label):
             ButtonWidget(data: .init(action: action, style: style, label: label))
+        case .toggle(let key, let style, let label):
+            ToggleWidget(data: .init(stateKey: key, style: style, label: label))
         case .color(let hex):
             ColorWidget(data: .init(color: hex))
         case .label(let title, let icon):
@@ -83,10 +90,10 @@ public enum WidgetEnum {
             TimerWidget(data: .init(deadline: deadline, countdown: countdown, properties: properties))
         case .padding(let padding, let edges, let content):
             PaddingWidget(data: .init(length: padding, edges: edges, content: content))
-        case .row(let alignment, let spacing, let items):
-            LayoutWidget(data: .init(layout: .horizontal, alignment: alignment?.generalAlignment, spacing: spacing, items: items))
-        case .column(let alignment, let spacing, let items):
-            LayoutWidget(data: .init(layout: .vertical, alignment: alignment?.generalAlignment, spacing: spacing, items: items))
+        case .row(let axes, let alignment, let spacing, let items):
+            LayoutWidget(data: .init(layout: .horizontal, scroll: axes, alignment: alignment?.generalAlignment, spacing: spacing, items: items))
+        case .column(let axes, let alignment, let spacing, let items):
+            LayoutWidget(data: .init(layout: .vertical, scroll: axes, alignment: alignment?.generalAlignment, spacing: spacing, items: items))
         case .stack(let alignment, let items):
             LayoutWidget(data: .init(layout: .perpendicular, alignment: alignment, items: items))
         case .frame(let width, let height, let alignment, let content):
