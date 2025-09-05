@@ -8,6 +8,26 @@
 import SDUIMacros
 import SwiftUI
 
+/// Represents a label with a title and an icon.
+///
+/// ### WidgetContentBuilder Syntax
+/// ```swift
+/// WidgetContainer {
+///     /.label {
+///         /.text("Hello, World!")
+///     } icon: {
+///         /.icon("sun.max.fill")
+///     }
+/// }
+/// ```
+///
+/// ### JSON Syntax
+/// ```json
+/// {
+///     "title": "Hello, World!",
+///     "icon": "icon-sun.max.fill"
+/// }
+/// ```
 @WidgetBuilder(args: .widget("title"), .widget("icon"))
 public struct LabelWidget: View {
     public var body: some View {

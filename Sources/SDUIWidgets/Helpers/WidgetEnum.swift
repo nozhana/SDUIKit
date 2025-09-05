@@ -14,6 +14,7 @@ public enum WidgetEnum {
     case image(_ url: URL, ratio: Double? = nil, resizeMode: ResizeMode? = nil)
     case icon(_ name: String, resizeMode: ResizeMode? = nil)
     case button(action: ButtonAction, style: ButtonStyle? = nil, label: AnyWidget)
+    case toggle(key: String, style: ToggleStyle? = nil, label: AnyWidget)
     case color(_ hex: String)
     case label(title: AnyWidget, icon: AnyWidget)
     case shape(_ shape: Shape, fill: String? = nil)
@@ -29,6 +30,10 @@ public enum WidgetEnum {
     
     public static func button(action: ButtonAction, style: ButtonStyle? = nil, @WidgetContentBuilder label: @escaping () -> AnyWidget) -> WidgetEnum {
         .button(action: action, style: style, label: label())
+    }
+    
+    public static func toggle(key: String, style: ToggleStyle? = nil, label: @escaping () -> AnyWidget) -> WidgetEnum {
+        .toggle(key: key, style: style, label: label())
     }
     
     public static func label(@WidgetContentBuilder title: @escaping () -> AnyWidget, @WidgetContentBuilder icon: @escaping () -> AnyWidget) -> WidgetEnum {
@@ -73,6 +78,8 @@ public enum WidgetEnum {
             SystemImageWidget(data: .init(name: name, resizeMode: resizeMode))
         case .button(let action, let style, let label):
             ButtonWidget(data: .init(action: action, style: style, label: label))
+        case .toggle(let key, let style, let label):
+            ToggleWidget(data: .init(stateKey: key, style: style, label: label))
         case .color(let hex):
             ColorWidget(data: .init(color: hex))
         case .label(let title, let icon):
