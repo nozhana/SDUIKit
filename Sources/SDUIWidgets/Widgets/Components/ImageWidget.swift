@@ -11,7 +11,7 @@ import SwiftUI
 
 @WidgetBuilder(args: .custom("imageURL", type: URL.self), .double("ratio", optional: true), .custom("resizeMode", type: ResizeMode.self, optional: true))
 public struct ImageWidget: View {
-    public func platformImage(for url: URL) -> Image? {
+    private func platformImage(for url: URL) -> Image? {
 #if canImport(UIKit)
         if let image = UIImage(contentsOfFile: url.path()) {
             return Image(uiImage: image)
